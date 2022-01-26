@@ -1,6 +1,8 @@
 # ggj-2022
 Project for the Global Game Jam 2022
-
+---
+## Referencias utiles
+- [Markdown](https://www.markdownguide.org/cheat-sheet/)
 ---
 
 # Mecánicas decididas en la reunion 25/01/2022
