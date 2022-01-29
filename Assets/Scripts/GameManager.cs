@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class GameManager : MonoBehaviour
 {
     #region VARS
+
+    public enum Elements { Fire, Water, Earth, Wind };
 
     [Header("Variables sobre slots")]
     public GameObject slotPrefab;
@@ -15,6 +18,7 @@ public class GameManager : MonoBehaviour
     public int playersCount = 4;
     public GameObject playerPrefab;
     public GameObject[] players;
+    public SortedDictionary<int, GameObject> sortedPlayers = new SortedDictionary<int, GameObject>();
 
     #endregion
 
@@ -78,11 +82,26 @@ public class GameManager : MonoBehaviour
         Positions positions = slotPositions[0].GetComponent<Positions>();
         for (int i = 0; i < playersCount; i++)
         {
-            Vector3 position = positions.getPosition(i);
+            Vector3 position = positions.getPosition(i) + slotPositions[0].transform.position;
             GameObject player = Instantiate(playerPrefab, position, Quaternion.identity);
-            player.name = "Player_" + i;
+            string playerName = "Player_" + i;
+            player.name = playerName;
+            Player playerClass = player.GetComponent<Player>();
+            playerClass.name = playerName;
+            playerClass.order = UnityEngine.Random.Range(1, 100);
+            sortedPlayers.Add(playerClass.order, players[i]);
             players[i] = player;
+
+            Debug.Log(playerClass.name + ": " + playerClass.order);
         }
+
+        Debug.Log(sortedPlayers.Values);
+
+    }
+
+    public void movePlayerPosition(int player, int position)
+    {
+
     }
 
     #endregion
