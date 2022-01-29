@@ -57,6 +57,8 @@ public class GameManager : MonoBehaviour
 
         //LLamando la nueva funcion
         playerLocalHost = findLocalPlayer();
+        playersRanking = players;
+
         updateStatsGui();
         startCountDown();
         //
@@ -65,6 +67,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        sortRanking();
         updateStatsGui();
     }
 
@@ -110,21 +113,12 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void positionatePlayers()
     {
-        Positions positions = slotPositions[38].GetComponent<Positions>();
+        Positions positions = slotPositions[0].GetComponent<Positions>();
         for (int i = 0; i < playersCount; i++)
         {
             Vector3 position = positions.getPosition(i) + slotPositions[0].transform.position;
             GameObject player = Instantiate(playerPrefab, position, Quaternion.identity);
             player.name = "Player_" + i;
-
-            // Solo es para poner al primer jugador como local
-            if (i == 0)
-            {
-                player.GetComponent<Player>().localHost = true;
-                player.GetComponent<Player>().name = "JugadorLocal";
-                player.GetComponent<Player>().life = 50;
-            }
-            // fin del cambio
 
             string playerName = "Player_" + i;
             player.name = playerName;
@@ -132,6 +126,20 @@ public class GameManager : MonoBehaviour
             playerClass.name = playerName;
             playerClass.order = UnityEngine.Random.Range(1, 100);
             sortedPlayers.Add(playerClass.order, players[i]);
+
+            // Solo es para poner al primer jugador como local y dejar el ranking por defecto a todos
+            player.GetComponent<Player>().ranking = i;
+            if (i == 0)
+            {
+
+                player.GetComponent<Player>().slotPosition = 0;
+                player.GetComponent<Player>().localHost = true;
+                player.GetComponent<Player>().name = "JugadorLocal";
+                player.GetComponent<Player>().life = 100;
+            }
+            player.GetComponent<Player>().updateStats();
+            // fin del cambio
+
             players[i] = player;
 
             Debug.Log(playerClass.name + ": " + playerClass.order);
@@ -155,7 +163,6 @@ public class GameManager : MonoBehaviour
         txtShield.text = playerLocalHost.GetComponent<Player>().shields.ToString();
         imgProfile.GetComponent<RawImage>().texture = playerLocalHost.GetComponent<Player>().imgProfile;
         txtGameResult.text = gameResult(playerLocalHost);
-
         //Game
         txtGameTurnTime.text = gameTurnTime.ToString();
 
@@ -213,6 +220,60 @@ public class GameManager : MonoBehaviour
             }
         }
         return result;
+    }
+    private void sortRanking()
+    {
+        int a = 0;
+        GameObject aux = null;
+        int mx = 0;
+        int index = 0;
+        bool sort = true;
+        bool equal = false;
+
+        while (sort)
+        {
+            sort = false;
+            equal = false;
+            if (index != 5)
+            {
+                sortMaximum(a, aux, mx, index);
+                int k = a;
+                while ((k < 3) && (!equal))
+                {
+                    if (playersRanking[k].GetComponent<Player>().statsValue[index] ==
+                                            playersRanking[k + 1].GetComponent<Player>().statsValue[index])
+                    {
+                        a = k;
+                        sort = true;
+                        index++;
+                        equal = true;
+                    }
+                    else
+                    {
+                        k++;
+                    }
+                }
+            }
+        }
+    }
+    private void sortMaximum(int a, GameObject aux, int mx, int index)
+    {
+
+        for (int i = a; i < 4; i++)
+        {
+            mx = i;
+            for (int j = i + 1; j < 4; j++)
+            {
+                if (playersRanking[j].GetComponent<Player>().statsValue[index] >
+                                        playersRanking[mx].GetComponent<Player>().statsValue[index])
+                {
+                    mx = j;
+                }
+            }
+            aux = playersRanking[i];
+            playersRanking[i] = playersRanking[mx];
+            playersRanking[mx] = aux;
+        }
     }
     // fin de nuevas funciones
     #endregion

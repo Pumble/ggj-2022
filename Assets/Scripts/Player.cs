@@ -10,7 +10,6 @@ public class Player : MonoBehaviour
     public string name = "name";
     public int order;
     public int attack = 10;
-
     public bool localHost = false;
     public Texture imgProfile = null;
 
@@ -21,15 +20,22 @@ public class Player : MonoBehaviour
     public int PA = 0;
 
     public int laps = 0;
+
+    public int slotPosition = 0;
+
+    public int[] statsValue =  new int[5];
+
+    public int ranking;
     void Start()
     {
 
+        updateStats();
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        updateStats();
     }
     public void move()
     {
@@ -61,6 +67,17 @@ public class Player : MonoBehaviour
     {
         gameOver = true;
     }
+
+    public void updateStats()
+    {
+        statsValue =  new int[5];
+        statsValue[0] = laps*100 + slotPosition;
+        statsValue[1] = life;
+        statsValue[2] = shields;
+        statsValue[3] = attack;
+        statsValue[4] = 3 - ranking;
+    }
+
     #region Public files
 
     #endregion

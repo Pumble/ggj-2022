@@ -598,8 +598,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 16.150002, y: -55.97}
-  m_SizeDelta: {x: -31.38, y: -122.18}
+  m_AnchoredPosition: {x: 13.865, y: -55.97}
+  m_SizeDelta: {x: -26.809, y: -122.18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &336818022
 MonoBehaviour:
@@ -876,8 +876,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 16.150002, y: 0.000030517578}
-  m_SizeDelta: {x: -31.38, y: -122.18}
+  m_AnchoredPosition: {x: 13.865, y: 0.000030517578}
+  m_SizeDelta: {x: -26.809, y: -122.18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &454600989
 MonoBehaviour:
@@ -1412,8 +1412,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 16.150002, y: 28.693}
-  m_SizeDelta: {x: -31.38, y: -120.6}
+  m_AnchoredPosition: {x: 13.8647, y: 28.693}
+  m_SizeDelta: {x: -26.8094, y: -120.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &850445983
 MonoBehaviour:
@@ -2543,8 +2543,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 16.150002, y: -27.986}
-  m_SizeDelta: {x: -31.38, y: -122.18}
+  m_AnchoredPosition: {x: 13.865, y: -27.986}
+  m_SizeDelta: {x: -26.809, y: -122.18}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1177384651
 MonoBehaviour:
@@ -3792,6 +3792,11 @@ MonoBehaviour:
   gameTurnTime: 30
   txtGameTurnTime: {fileID: 1345513445}
   txtGameResult: {fileID: 739514864}
+  playersRanking: []
+  txtRanking1: {fileID: 850445983}
+  txtRanking2: {fileID: 454600989}
+  txtRanking3: {fileID: 1177384651}
+  txtRanking4: {fileID: 336818022}
   txtNamePlayer: {fileID: 1108656492}
   sliderLife: {fileID: 1168728760}
   txtPA: {fileID: 43263440}

@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f4f3da6a0c4663499b5a74b31e90827, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  life: 0
+  life: 100
   shields: 0
   name: name
   order: 0
@@ -150,3 +150,7 @@ MonoBehaviour:
   gameOver: 0
   win: 0
   PA: 0
+  laps: 0
+  slotPosition: 0
+  statsValue: 
+  ranking: 0
