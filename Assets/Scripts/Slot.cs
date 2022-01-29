@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class InnerPosition
 {
     #region VARS
 
     public Vector3 location;
-    public Player player;
+    public GameObject player;
 
     #endregion
 
@@ -38,7 +39,7 @@ public class Slot : MonoBehaviour
         }
     }
 
-    public Vector3 setPlayer(Player player)
+    public int getFreePosition()
     {
         bool freePosition = false;
         int index = 0;
@@ -54,12 +55,40 @@ public class Slot : MonoBehaviour
             }
         } while (index < playersCount && freePosition == false);
 
-        positions[index].player = player;
+        return index;
+    }
+
+    public Vector3 getLocationByIndex(int index)
+    {
         return positions[index].location;
     }
 
     public Vector3 getPlayerLocation(int playerIndex)
     {
         return positions[playerIndex].location;
+    }
+
+    public void setPlayerInPosition(int index, GameObject player)
+    {
+        positions[index].player = player;
+    }
+
+    public int getPlayerLocation(GameObject player)
+    {
+        bool founded = false;
+        int index = 0;
+        for (index = 0; index < positions.Length && founded == false; index++)
+        {
+            if (positions[index].player == player)
+            {
+                founded = true;
+            }
+        }
+        return index;
+    }
+
+    public void removePlayerFromLocationByIndex(int index)
+    {
+        positions[index].player = null;
     }
 }

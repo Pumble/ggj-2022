@@ -3,65 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public static class Change
-{
-
-    public static Vector2 X(this Vector2 v, float x)
-    {
-        v.x = x;
-        return v;
-    }
-
-    public static Vector2 Y(this Vector2 v, float y)
-    {
-        v.y = y;
-        return v;
-    }
-
-    public static Vector3 X(this Vector3 v, float x)
-    {
-        v.x = x;
-        return v;
-    }
-
-    public static Vector3 Y(this Vector3 v, float y)
-    {
-        v.y = y;
-        return v;
-    }
-
-    public static Vector3 Z(this Vector3 v, float z)
-    {
-        v.z = z;
-        return v;
-    }
-
-    public static Color R(this Color c, float r)
-    {
-        c.r = r;
-        return c;
-    }
-
-    public static Color G(this Color c, float g)
-    {
-        c.g = g;
-        return c;
-    }
-
-    public static Color B(this Color c, float b)
-    {
-        c.b = b;
-        return c;
-    }
-
-    public static Color A(this Color c, float a)
-    {
-        c.a = a;
-        return c;
-    }
-}
-
-
 public class GameManager : MonoBehaviour
 {
     #region VARS
@@ -76,7 +17,7 @@ public class GameManager : MonoBehaviour
     [Header("Variables sobre los jugadores")]
     public int playersCount = 4;
     public GameObject playerPrefab;
-    public Player[] players;
+    public GameObject[] players;
     public SortedDictionary<int, Player> sortedPlayers = new SortedDictionary<int, Player>();
 
     #endregion
@@ -85,15 +26,9 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         slots = new GameObject[slotsNumber];
-        players = new Player[playersCount];
+        players = new GameObject[playersCount];
         generatBoard();
         setPlayersInInitialPosition(0);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     #region Methods
@@ -144,26 +79,23 @@ public class GameManager : MonoBehaviour
         {
             string playerName = "Player_" + i;
 
-            Player player = new Player();
-            player.nickname = playerName;
-            player.order = UnityEngine.Random.Range(1, 100);
-
-            Vector3 innerLocation = initialSlot.setPlayer(player);
-            Vector3 position = innerLocation + slots[initialPosition].transform.position;
+            int freePosition = initialSlot.getFreePosition();
+            Vector3 position = initialSlot.getLocationByIndex(freePosition) + slots[initialPosition].transform.position;
             GameObject avatar = Instantiate(playerPrefab, position, Quaternion.identity);
             avatar.name = playerName;
 
-            player.avatar = avatar;
-            players[i] = player;
+            Player player = avatar.GetComponent<Player>();
+            player.nickname = playerName;
+            player.order = UnityEngine.Random.Range(1, 100);
+            player.gameManager = this;
+            player.positionInSlot = freePosition;
+
+            players[i] = avatar;
+            initialSlot.setPlayerInPosition(freePosition, avatar);
             sortedPlayers.Add(player.order, player);
             Debug.Log(player.nickname + ": " + player.order);
         }
-
-        // Debug.Log(sortedPlayers.Values);
-
-    }    
+    }
 
     #endregion
-
-    
 }
