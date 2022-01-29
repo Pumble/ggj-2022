@@ -110,7 +110,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             string isMasterClient = (PhotonNetwork.PlayerList[i].IsMasterClient ? "*" : "");
             int life = (int)PhotonNetwork.PlayerList[i].CustomProperties["life"];
             int attack = (int)PhotonNetwork.PlayerList[i].CustomProperties["attack"];
-            GUI.Label(new Rect(5, 35 + 30 * i, 200, 25), PhotonNetwork.PlayerList[i].ActorNumber + "-" + isMasterClient + PhotonNetwork.PlayerList[i].NickName + "("+ life + ", "+ attack + ")");
+            GUI.Label(new Rect(5, 35 + 30 * i, 200, 25), PhotonNetwork.PlayerList[i].ActorNumber + "-" + isMasterClient + PhotonNetwork.PlayerList[i].NickName + "(" + life + ", " + attack + ")");
         }
     }
 
@@ -251,6 +251,9 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         }
     }
 
+    /// <summary>
+    /// Establece en que turno van a jugar los jugadores
+    /// </summary>
     private void setTurnsToPlayer()
     {
         SortedDictionary<int, Photon.Realtime.Player> sortedPlayers = new SortedDictionary<int, Photon.Realtime.Player>();
@@ -264,7 +267,8 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         {
             Hashtable hashtable = new Hashtable();
             hashtable.Add("turn", localTurn);
-            PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
+            player.Value.SetCustomProperties(hashtable);
+            localTurn++;
         }
     }
 }
