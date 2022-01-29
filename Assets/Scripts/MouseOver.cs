@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MouseOver : MonoBehaviour
 {
-    public Transform transform;
+    private Transform transform;
 
     private void Awake()
     {
