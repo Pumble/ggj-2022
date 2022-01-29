@@ -105,7 +105,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 265048772557894847}
-  - component: {fileID: 465520511392094193}
+  - component: {fileID: 7063931537677131685}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -128,7 +128,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &465520511392094193
+--- !u!114 &7063931537677131685
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -140,13 +140,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f4f3da6a0c4663499b5a74b31e90827, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  life: 0
-  shields: 0
-  name: name
+  nickname: 
   order: 0
-  attack: 0
-  localHost: 0
-  imgProfile: {fileID: 2800000, guid: 769fd5d630b3a4f4cb313a0c9917d3c8, type: 3}
-  gameOver: 0
-  win: 0
-  PA: 0
+  life: 100
+  attack: 10
+  currentSlot: 0
+  avatar: {fileID: 0}
+  gameManager: {fileID: 0}
