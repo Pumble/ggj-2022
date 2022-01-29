@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     public int life = 0;
     public int shields = 0;
     public string name = "name";
+    public int order;
+    public int attack = 10;
 
     public bool localHost = false;
     public Texture imgProfile = null;
@@ -17,6 +19,8 @@ public class Player : MonoBehaviour
     public bool win = false;
 
     public int PA = 0;
+
+    public int laps = 0;
     void Start()
     {
 
@@ -48,20 +52,16 @@ public class Player : MonoBehaviour
                 if ((life + a) <= 0)
                 {
                     life = 0;
-                    deat();
+                    death();
                 }
             }
         }
     }
-    public void deat(){
+    public void death()
+    {
         gameOver = true;
     }
     #region Public files
-
-    public string Name;
-    public int order;
-    public int life = 100;
-    public int attack = 10;
 
     #endregion
 }

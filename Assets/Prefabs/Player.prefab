@@ -140,7 +140,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f4f3da6a0c4663499b5a74b31e90827, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Name: 
-  order: 0
   life: 0
+  shields: 0
+  name: name
+  order: 0
   attack: 0
+  localHost: 0
+  imgProfile: {fileID: 2800000, guid: 769fd5d630b3a4f4cb313a0c9917d3c8, type: 3}
+  gameOver: 0
+  win: 0
+  PA: 0

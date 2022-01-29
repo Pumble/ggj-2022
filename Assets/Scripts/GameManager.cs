@@ -28,6 +28,12 @@ public class GameManager : MonoBehaviour
 
     public Text txtGameResult;
 
+    public GameObject[] playersRanking;
+    public Text txtRanking1;
+    public Text txtRanking2;
+    public Text txtRanking3;
+    public Text txtRanking4;
+
     //Jugador
     private GameObject playerLocalHost;
     public Text txtNamePlayer;
@@ -51,7 +57,7 @@ public class GameManager : MonoBehaviour
 
         //LLamando la nueva funcion
         playerLocalHost = findLocalPlayer();
-        updatePlayerStats();
+        updateStatsGui();
         startCountDown();
         //
     }
@@ -59,7 +65,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        updatePlayerStats();
+        updateStatsGui();
     }
 
     #region Methods
@@ -140,15 +146,23 @@ public class GameManager : MonoBehaviour
 
     }
     // Nuevas funciones
-    private void updatePlayerStats()
+    private void updateStatsGui()
     {
+        //Player
         txtNamePlayer.text = playerLocalHost.GetComponent<Player>().name;
         sliderLife.value = playerLocalHost.GetComponent<Player>().life;
         txtPA.text = playerLocalHost.GetComponent<Player>().PA.ToString();
         txtShield.text = playerLocalHost.GetComponent<Player>().shields.ToString();
         imgProfile.GetComponent<RawImage>().texture = playerLocalHost.GetComponent<Player>().imgProfile;
-        txtGameTurnTime.text = gameTurnTime.ToString();
         txtGameResult.text = gameResult(playerLocalHost);
+
+        //Game
+        txtGameTurnTime.text = gameTurnTime.ToString();
+
+        txtRanking1.text = playersRanking[0].GetComponent<Player>().name;
+        txtRanking2.text = playersRanking[1].GetComponent<Player>().name;
+        txtRanking3.text = playersRanking[2].GetComponent<Player>().name;
+        txtRanking4.text = playersRanking[3].GetComponent<Player>().name;
     }
     private GameObject findLocalPlayer()
     {
