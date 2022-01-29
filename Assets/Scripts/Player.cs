@@ -56,4 +56,12 @@ public class Player : MonoBehaviour
     public void deat(){
         gameOver = true;
     }
+    #region Public files
+
+    public string Name;
+    public int order;
+    public int life = 100;
+    public int attack = 10;
+
+    #endregion
 }
