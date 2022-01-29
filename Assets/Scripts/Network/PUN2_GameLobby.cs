@@ -199,6 +199,10 @@ public class PUN2_GameLobby : MonoBehaviourPunCallbacks
         hashtable.Add("element", 1);
         hashtable.Add("order", UnityEngine.Random.Range(1, 100));
         hashtable.Add("turn", 1);
+        hashtable.Add("PA", 1);
+        hashtable.Add("shields", 1);
+        hashtable.Add("laps", 0);
+        hashtable.Add("state", 1);
         PhotonNetwork.SetPlayerCustomProperties(hashtable);
     }
 }

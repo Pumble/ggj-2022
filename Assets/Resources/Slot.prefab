@@ -185,6 +185,7 @@ GameObject:
   - component: {fileID: 7079113011072507927}
   - component: {fileID: 7956551371853242056}
   - component: {fileID: 5185552436244649660}
+  - component: {fileID: -2848404750924913597}
   m_Layer: 0
   m_Name: Slot
   m_TagString: Untagged
@@ -285,7 +286,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63792a2569dd0541aefc1a7403511e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  transform: {fileID: 4989785494663715673}
 --- !u!114 &5185552436244649660
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298,13 +298,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1344de68499b5c644b5063df1e008557, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentPlayers: []
-  positions:
-  - {fileID: 6523613812327717969}
-  - {fileID: 2043396598271032392}
-  - {fileID: 6347814627238784234}
-  - {fileID: 4640262686593564624}
+  playersCount: 4
   card: {fileID: 0}
+--- !u!114 &-2848404750924913597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4989785494663715672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &5318745465273805421
 GameObject:
   m_ObjectHideFlags: 0

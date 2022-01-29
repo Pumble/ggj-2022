@@ -36,6 +36,11 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     public int round = 0;
     public int turn = 0;
 
+    [Header("Tiempo de las partidas")]
+    public int matchTime = 30;
+    public Text timeLabel;
+    private int time;
+
     private void Awake()
     {
         _camera = Camera.main;
@@ -103,9 +108,9 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         {
             //Show if this player is a Master Client. There can only be one Master Client per Room so use this to define the authoritative logic etc.)
             string isMasterClient = (PhotonNetwork.PlayerList[i].IsMasterClient ? "*" : "");
-            int points = (int)PhotonNetwork.PlayerList[i].CustomProperties["points"];
-            int team = (int)PhotonNetwork.PlayerList[i].CustomProperties["team"];
-            GUI.Label(new Rect(5, 35 + 30 * i, 200, 25), PhotonNetwork.PlayerList[i].ActorNumber + "-" + isMasterClient + PhotonNetwork.PlayerList[i].NickName + "(" + Enum.GetName(typeof(Teams), team) + ")" + ": " + points);
+            int life = (int)PhotonNetwork.PlayerList[i].CustomProperties["life"];
+            int attack = (int)PhotonNetwork.PlayerList[i].CustomProperties["attack"];
+            GUI.Label(new Rect(5, 35 + 30 * i, 200, 25), PhotonNetwork.PlayerList[i].ActorNumber + "-" + isMasterClient + PhotonNetwork.PlayerList[i].NickName + "("+ life + ", "+ attack + ")");
         }
     }
 
@@ -174,6 +179,8 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     /// </summary>
     private void generatBoard()
     {
+        slots = new GameObject[slotsNumber];
+
         float x = 0, y = 0.0f, z = 0f;
         int splitIn = slotsNumber / 4;
         for (int i = 0, slotIndex = 1; i < slotsNumber; i++, slotIndex++)
