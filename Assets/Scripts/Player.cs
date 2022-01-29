@@ -1,21 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+// USING AGREGADOS
+using Photon.Pun;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviourPun
 {
-    #region Public files
+    #region Vars
 
-    public string nickname = null;
-    // Start is called before the first frame update
     public int life = 0;
     public int shields = 0;
-    public string name = "name";
-    public int order;
     public int attack = 10;
     public int currentSlot = 0;
     public int positionInSlot = 0;
     public GameManager gameManager;
+    public Elements element = (Elements)1;
 
     public bool localHost = false;
     public Texture imgProfile = null;
@@ -60,8 +59,6 @@ public class Player : MonoBehaviour
 
     public Player()
     {
-        this.nickname = null;
-        this.order = 0;
         this.life = 100;
         this.attack = 10;
         this.currentSlot = 0;

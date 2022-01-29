@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Random = UnityEngine.Random;
+using Photon.Pun;
 
-public class GameManager : MonoBehaviour
+public enum Elements : ushort { Fire = 1, Water = 2, Earth = 3, Wind = 4 };
+
+public class GameManager : MonoBehaviourPun
 {
     #region VARS
 
-    public enum Elements { Fire, Water, Earth, Wind };
+    [Header("Game Manager del nivel")]
 
     [Header("Variables sobre slots")]
     public GameObject slotPrefab;
@@ -21,6 +25,10 @@ public class GameManager : MonoBehaviour
     public GameObject[] players;
     public SortedDictionary<int, Player> sortedPlayers = new SortedDictionary<int, Player>();
 
+    [Header("Variables sobre la musica")]
+    public GameObject musicList;
+
+    [Header("Variables sobre la UI")]
     // Nuevas variables, son para las estadisticas del juegador y juego
     //Juego
     public int gameTurnTime = 0;
@@ -47,94 +55,41 @@ public class GameManager : MonoBehaviour
     // fin
     #endregion
 
+    public bool MatchInCourse = false;
+
     // Start is called before the first frame update
     void Start()
     {
         slots = new GameObject[slotsNumber];
         players = new GameObject[playersCount];
-        generatBoard();
+
         setPlayersInInitialPosition(0);
 
         //LLamando la nueva funcion
         playerLocalHost = findLocalPlayer();
         updateStatsGui();
         startCountDown();
-        //
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         updateStatsGui();
     }
 
     #region Methods
 
-    /// <summary>
-    /// Generate the board, make it with slots
-    /// </summary>
-    private void generatBoard()
+    void StarMusic()
     {
-        float x = 0, y = 0.0f, z = 0f;
-        int splitIn = slotsNumber / 4;
-        for (int i = 0, slotIndex = 1; i < slotsNumber; i++, slotIndex++)
+        try
         {
-            GameObject newSlot = Instantiate(slotPrefab, new Vector3(x, y, z), Quaternion.identity);
-            newSlot.name = "Slot_" + slotIndex;
-
-            if (slotIndex >= splitIn * 3)
-            {
-                x = -1;
-                z++;
-            }
-            else if (slotIndex >= splitIn * 2)
-            {
-                x--;
-                z = -10;
-            }
-            else if (slotIndex >= splitIn)
-            {
-                z--;
-                x = 9;
-            }
-            else
-            {
-                x++;
-            }
-
-            slots[i] = newSlot;
+            AudioSource[] audios = musicList.GetComponents<AudioSource>();
+            int musicRandom = Random.Range(0, audios.Length - 1);
+            audios[musicRandom].Play();
         }
-    }
-
-    /// <summary>
-    /// Instantiate every player in the slot #0
-    /// </summary>
-    private void setPlayersInInitialPosition(int initialPosition)
-    {
-        Slot initialSlot = slots[initialPosition].GetComponent<Slot>();
-        for (int i = 0; i < playersCount; i++)
+        catch (System.Exception)
         {
-            string playerName = "Player_" + i;
-
-            Vector3 position = positions.getPosition(i) + slotPositions[0].transform.position;
-            GameObject player = Instantiate(playerPrefab, position, Quaternion.identity);
-            player.name = "Player_" + i;
-
-            int freePosition = initialSlot.getFreePosition();
-            Vector3 position = initialSlot.getLocationByIndex(freePosition) + slots[initialPosition].transform.position;
-            GameObject avatar = Instantiate(playerPrefab, position, Quaternion.identity);
-            avatar.name = playerName;
-
-            Player player = avatar.GetComponent<Player>();
-            player.nickname = playerName;
-            player.order = UnityEngine.Random.Range(1, 100);
-            player.gameManager = this;
-            player.positionInSlot = freePosition;
-
-            players[i] = avatar;
-            initialSlot.setPlayerInPosition(freePosition, avatar);
-            sortedPlayers.Add(player.order, player);
-            Debug.Log(player.nickname + ": " + player.order);
+            Debug.LogError("Algo paso con la musica");
         }
     }
 
@@ -212,6 +167,20 @@ public class GameManager : MonoBehaviour
         return result;
     }
     // fin de nuevas funciones
-    
+
+    #endregion
+
+
+    #region PUN EVENTS
+
+    [PunRPC]
+    void attack(Player from, Player to)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            to.life = to.life - from.attack;
+        }
+    }
+
     #endregion
 }
