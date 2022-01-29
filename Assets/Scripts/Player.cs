@@ -7,12 +7,54 @@ public class Player : MonoBehaviour
     #region Public files
 
     public string nickname = null;
+    // Start is called before the first frame update
+    public int life = 0;
+    public int shields = 0;
+    public string name = "name";
     public int order;
-    public int life = 100;
     public int attack = 10;
     public int currentSlot = 0;
     public int positionInSlot = 0;
     public GameManager gameManager;
+
+    public bool localHost = false;
+    public Texture imgProfile = null;
+
+    public bool gameOver = false;
+
+    public bool win = false;
+
+    public int PA = 0;
+
+    public int laps = 0;
+
+    public void setLife(int a)
+    {
+        if ((life + a) <= 100)
+        {
+            life = life + a;
+        }
+        else
+        {
+            if ((life + a) > 100)
+            {
+                life = 100;
+            }
+            else
+            {
+                if ((life + a) <= 0)
+                {
+                    life = 0;
+                    death();
+                }
+            }
+        }
+    }
+
+    public void death()
+    {
+        gameOver = true;
+    }
 
     #endregion
 
