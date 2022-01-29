@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] players;
     public SortedDictionary<int, Player> sortedPlayers = new SortedDictionary<int, Player>();
 
-    // Nuevas variables, son para las estadisticas del juegador y juego
+    // Nuevas variables, son para las estadisticas del jugador y juego
     //Juego
     public int gameTurnTime = 0;
     public Text txtGameTurnTime;
@@ -59,7 +59,6 @@ public class GameManager : MonoBehaviour
         playerLocalHost = findLocalPlayer();
         updateStatsGui();
         startCountDown();
-        //
     }
 
     // Update is called once per frame
@@ -116,10 +115,6 @@ public class GameManager : MonoBehaviour
         {
             string playerName = "Player_" + i;
 
-            Vector3 position = positions.getPosition(i) + slotPositions[0].transform.position;
-            GameObject player = Instantiate(playerPrefab, position, Quaternion.identity);
-            player.name = "Player_" + i;
-
             int freePosition = initialSlot.getFreePosition();
             Vector3 position = initialSlot.getLocationByIndex(freePosition) + slots[initialPosition].transform.position;
             GameObject avatar = Instantiate(playerPrefab, position, Quaternion.identity);
@@ -130,6 +125,10 @@ public class GameManager : MonoBehaviour
             player.order = UnityEngine.Random.Range(1, 100);
             player.gameManager = this;
             player.positionInSlot = freePosition;
+
+            if (i == 0) {
+                player.localHost = true;
+            }
 
             players[i] = avatar;
             initialSlot.setPlayerInPosition(freePosition, avatar);
@@ -200,7 +199,6 @@ public class GameManager : MonoBehaviour
         if (ply.GetComponent<Player>().win)
         {
             result = "WIN";
-
         }
         else
         {
@@ -212,6 +210,6 @@ public class GameManager : MonoBehaviour
         return result;
     }
     // fin de nuevas funciones
-    
+
     #endregion
 }

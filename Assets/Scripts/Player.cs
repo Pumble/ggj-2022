@@ -7,10 +7,8 @@ public class Player : MonoBehaviour
     #region Public files
 
     public string nickname = null;
-    // Start is called before the first frame update
     public int life = 0;
     public int shields = 0;
-    public string name = "name";
     public int order;
     public int attack = 10;
     public int currentSlot = 0;
