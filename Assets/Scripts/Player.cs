@@ -1,84 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+// USING AGREGADOS
+using Photon.Pun;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviourPun
 {
-    #region Public files
+    #region Vars
 
-    public string nickname = null;
-    public int life = 0;
-    public int shields = 0;
-    public int order;
-    public int attack = 10;
-    public int currentSlot = 0;
-    public int positionInSlot = 0;
     public GameManager gameManager;
+    public PUN2_RoomController roomController;
+    public Photon.Realtime.Player localPlayer;
 
-    public bool localHost = false;
-    public Texture imgProfile = null;
+    #endregion
 
-    public bool gameOver = false;
+    #region Events
 
-    public bool win = false;
-
-    public int PA = 0;
-
-    public int laps = 0;
-
-    public void setLife(int a)
+    void Start()
     {
-        if ((life + a) <= 100)
-        {
-            life = life + a;
-        }
-        else
-        {
-            if ((life + a) > 100)
-            {
-                life = 100;
-            }
-            else
-            {
-                if ((life + a) <= 0)
-                {
-                    life = 0;
-                    death();
-                }
-            }
-        }
+        roomController = FindObjectsOfType<PUN2_RoomController>()[0];
+        localPlayer = PhotonNetwork.LocalPlayer;
     }
 
-    public void death()
+    private void Update()
     {
-        gameOver = true;
+        if (gameManager.MatchInCourse)
+        {
+            //if ((int)PhotonNetwork.LocalPlayer.CustomProperties["turn"] == roomController.turn)
+            //{ 
+            //    // AQUI ME PUEDO MOVER
+
+            //}
+        }
     }
 
     #endregion
 
-    public Player()
-    {
-        this.nickname = null;
-        this.order = 0;
-        this.life = 100;
-        this.attack = 10;
-        this.currentSlot = 0;
-        this.positionInSlot = 0;
-        this.gameManager = null;
-    }
-
     public void move(int from, int to)
     {
-        Slot slotFrom = gameManager.slots[from].GetComponent<Slot>();
-        Slot slotTo = gameManager.slots[to].GetComponent<Slot>();
+        Slot slotFrom = roomController.slots[from].GetComponent<Slot>();
+        Slot slotTo = roomController.slots[to].GetComponent<Slot>();
 
-        Vector3 fromPosition = gameManager.slots[0].transform.position + slotFrom.getPlayerLocation(this.positionInSlot);
+        Vector3 fromPosition = roomController.slots[0].transform.position + slotFrom.getPlayerLocation((int)localPlayer.CustomProperties["slot"]);
         int nextFreePosition = slotTo.getFreePosition();
-        Vector3 toPosition = gameManager.slots[2].transform.position + slotTo.getLocationByIndex(nextFreePosition);
+        Vector3 toPosition = roomController.slots[2].transform.position + slotTo.getLocationByIndex(nextFreePosition);
 
         // Remove from old position to the new one
-        slotFrom.removePlayerFromLocationByIndex(this.positionInSlot);
-        this.positionInSlot = nextFreePosition;
+        slotFrom.removePlayerFromLocationByIndex((int)localPlayer.CustomProperties["slot"]);
+
+        Hashtable hashtable = new Hashtable();
+        hashtable.Add("slot", nextFreePosition);
+        PhotonNetwork.SetPlayerCustomProperties(hashtable);
 
         StartCoroutine(moveToken(3f, fromPosition, toPosition, this.transform));
     }
@@ -93,4 +66,29 @@ public class Player : MonoBehaviour
             yield return null;
         }
     }
+
+    //public void setLife(int a)
+    //{
+    //    if(PhotonNetwork.is
+
+    //    if ((life + a) <= 100)
+    //    {
+    //        life = life + a;
+    //    }
+    //    else
+    //    {
+    //        if ((life + a) > 100)
+    //        {
+    //            life = 100;
+    //        }
+    //        else
+    //        {
+    //            if ((life + a) <= 0)
+    //            {
+    //                life = 0;
+    //                death();
+    //            }
+    //        }
+    //    }
+    //}
 }

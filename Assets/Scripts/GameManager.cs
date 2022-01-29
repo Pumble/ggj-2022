@@ -3,168 +3,91 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Random = UnityEngine.Random;
+using Photon.Pun;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-public class GameManager : MonoBehaviour
+public enum Elements : ushort { Fire = 1, Water = 2, Earth = 3, Wind = 4 };
+public enum PlayerState : ushort { Death = 0, Alive = 1, Winner = 2 };
+
+public class GameManager : MonoBehaviourPun
 {
     #region VARS
 
-    public enum Elements { Fire, Water, Earth, Wind };
+    [Header("Game Manager del nivel")]
 
-    [Header("Variables sobre slots")]
-    public GameObject slotPrefab;
-    public GameObject[] slots;
-    public int slotsNumber = 40;
+    [Header("Variables sobre la musica")]
+    public GameObject musicList;
 
-    [Header("Variables sobre los jugadores")]
-    public int playersCount = 4;
-    public GameObject playerPrefab;
-    public GameObject[] players;
-    public SortedDictionary<int, Player> sortedPlayers = new SortedDictionary<int, Player>();
-
-    // Nuevas variables, son para las estadisticas del jugador y juego
-    //Juego
+    [Header("Variables sobre la UI")]
     public int gameTurnTime = 0;
     public Text txtGameTurnTime;
 
     public Text txtGameResult;
 
     public GameObject[] playersRanking;
-    public Text txtRanking1;
-    public Text txtRanking2;
-    public Text txtRanking3;
-    public Text txtRanking4;
+    public List<Text> txtRankings = new List<Text>();
 
-    //Jugador
-    private GameObject playerLocalHost;
     public Text txtNamePlayer;
     public Slider sliderLife;
-
     public Text txtPA;
-
     public Text txtShield;
-
     public RawImage imgProfile;
-    // fin
+
     #endregion
+
+    public bool MatchInCourse = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        slots = new GameObject[slotsNumber];
-        players = new GameObject[playersCount];
-        generatBoard();
-        setPlayersInInitialPosition(0);
-
-        //LLamando la nueva funcion
-        playerLocalHost = findLocalPlayer();
-        updateStatsGui();
-        startCountDown();
+        StarMusic();
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        updateStatsGui();
+        updateStatsUI();
     }
 
     #region Methods
 
-    /// <summary>
-    /// Generate the board, make it with slots
-    /// </summary>
-    private void generatBoard()
+    void StarMusic()
     {
-        float x = 0, y = 0.0f, z = 0f;
-        int splitIn = slotsNumber / 4;
-        for (int i = 0, slotIndex = 1; i < slotsNumber; i++, slotIndex++)
+        try
         {
-            GameObject newSlot = Instantiate(slotPrefab, new Vector3(x, y, z), Quaternion.identity);
-            newSlot.name = "Slot_" + slotIndex;
-
-            if (slotIndex >= splitIn * 3)
-            {
-                x = -1;
-                z++;
-            }
-            else if (slotIndex >= splitIn * 2)
-            {
-                x--;
-                z = -10;
-            }
-            else if (slotIndex >= splitIn)
-            {
-                z--;
-                x = 9;
-            }
-            else
-            {
-                x++;
-            }
-
-            slots[i] = newSlot;
+            AudioSource[] audios = musicList.GetComponents<AudioSource>();
+            int musicRandom = Random.Range(0, audios.Length - 1);
+            audios[musicRandom].Play();
+        }
+        catch (System.Exception)
+        {
+            Debug.LogError("Algo paso con la musica");
         }
     }
 
-    /// <summary>
-    /// Instantiate every player in the slot #0
-    /// </summary>
-    private void setPlayersInInitialPosition(int initialPosition)
+    private void updateStatsUI()
     {
-        Slot initialSlot = slots[initialPosition].GetComponent<Slot>();
-        for (int i = 0; i < playersCount; i++)
+        if (photonView.IsMine)
         {
-            string playerName = "Player_" + i;
+            Photon.Realtime.Player player = PhotonNetwork.LocalPlayer;
 
-            int freePosition = initialSlot.getFreePosition();
-            Vector3 position = initialSlot.getLocationByIndex(freePosition) + slots[initialPosition].transform.position;
-            GameObject avatar = Instantiate(playerPrefab, position, Quaternion.identity);
-            avatar.name = playerName;
+            txtNamePlayer.text = player.NickName;
+            sliderLife.value = (int)player.CustomProperties["life"];
+            txtPA.text = player.CustomProperties["PA"].ToString();
+            txtShield.text = player.CustomProperties["shields"].ToString();
+            // imgProfile.GetComponent<RawImage>().texture = playerLocalHost.GetComponent<Player>().imgProfile;
+            txtGameResult.text = gameResult();
 
-            Player player = avatar.GetComponent<Player>();
-            player.nickname = playerName;
-            player.order = UnityEngine.Random.Range(1, 100);
-            player.gameManager = this;
-            player.positionInSlot = freePosition;
+            //Game
+            txtGameTurnTime.text = gameTurnTime.ToString();
 
-            if (i == 0) {
-                player.localHost = true;
+            for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+            {
+                Photon.Realtime.Player p = PhotonNetwork.PlayerList[i];
+                txtRankings[i].text = p.NickName;
             }
-
-            players[i] = avatar;
-            initialSlot.setPlayerInPosition(freePosition, avatar);
-            sortedPlayers.Add(player.order, player);
-            Debug.Log(player.nickname + ": " + player.order);
         }
-    }
-
-    // Nuevas funciones
-    private void updateStatsGui()
-    {
-        //Player
-        txtNamePlayer.text = playerLocalHost.GetComponent<Player>().name;
-        sliderLife.value = playerLocalHost.GetComponent<Player>().life;
-        txtPA.text = playerLocalHost.GetComponent<Player>().PA.ToString();
-        txtShield.text = playerLocalHost.GetComponent<Player>().shields.ToString();
-        imgProfile.GetComponent<RawImage>().texture = playerLocalHost.GetComponent<Player>().imgProfile;
-        txtGameResult.text = gameResult(playerLocalHost);
-
-        //Game
-        txtGameTurnTime.text = gameTurnTime.ToString();
-
-        txtRanking1.text = playersRanking[0].GetComponent<Player>().name;
-        txtRanking2.text = playersRanking[1].GetComponent<Player>().name;
-        txtRanking3.text = playersRanking[2].GetComponent<Player>().name;
-        txtRanking4.text = playersRanking[3].GetComponent<Player>().name;
-    }
-
-    private GameObject findLocalPlayer()
-    {
-        int i = 0;
-        while (players[i].GetComponent<Player>().localHost != true)
-        {
-            i++;
-        }
-        return players[i];
     }
 
     public void startCountDown()
@@ -193,23 +116,42 @@ public class GameManager : MonoBehaviour
         StartCoroutine("setTime");
     }
 
-    public string gameResult(GameObject ply)
+    public string gameResult()
     {
         string result = "En curso";
-        if (ply.GetComponent<Player>().win)
+        PlayerState state = (PlayerState)((int)PhotonNetwork.LocalPlayer.CustomProperties["state"]);
+
+        switch (state)
         {
-            result = "WIN";
-        }
-        else
-        {
-            if (ply.GetComponent<Player>().gameOver)
-            {
+            case PlayerState.Winner:
+                result = "WIN";
+                break;
+            case PlayerState.Death:
                 result = "GAME OVER";
-            }
+                break;
+            default:
+                result = "En curso";
+                break;
         }
         return result;
     }
-    // fin de nuevas funciones
+
+    #endregion
+
+    #region PUN EVENTS
+
+    [PunRPC]
+    void attack(Photon.Realtime.Player from, Photon.Realtime.Player to)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            int life = (int)to.CustomProperties["life"] - (int)from.CustomProperties["attack"];
+
+            Hashtable hashtable = new Hashtable();
+            hashtable.Add("life", life);
+            to.SetCustomProperties(hashtable);
+        }
+    }
 
     #endregion
 }

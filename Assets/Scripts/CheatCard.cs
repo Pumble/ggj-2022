@@ -17,12 +17,12 @@ public class CheatCard : MonoBehaviour
     public string name = "";
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
