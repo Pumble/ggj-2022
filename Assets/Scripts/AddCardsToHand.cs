@@ -6,16 +6,26 @@ public class AddCardsToHand : MonoBehaviour
 {
     public GameObject handHolder;
     public List<GameObject> prefabs = new List<GameObject>();
+    public bool generateCards = true;
 
     private void Start()
     {
-        int x = 116;
-        foreach (GameObject card in prefabs)
+
+    }
+
+    private void OnGUI()
+    {
+        if (generateCards)
         {
-            GameObject instance = Instantiate(card);
-            instance.transform.SetParent(handHolder.transform);
-            instance.GetComponent<RectTransform>().position = new Vector3(x, 76, 0);
-            x += 116;
+            int x = 116;
+            foreach (GameObject card in prefabs)
+            {
+                GameObject instance = Instantiate(card);
+                instance.transform.SetParent(handHolder.transform);
+                instance.GetComponent<RectTransform>().position = new Vector3(x, 76, 0);
+                x += 116;
+            }
+            generateCards = false;
         }
     }
 }

@@ -54,6 +54,9 @@ public class Card : MonoBehaviour
         {
             videoPlayer.enabled = true;
         }
+
+        // Display the tooltip from the element that has mouseover or keyboard focus
+        GUI.Label(new Rect(10, 40, 100, 40), GUI.tooltip);
     }
 
     public List<CustomKeyValuePair<Elements, int>> getStats()
