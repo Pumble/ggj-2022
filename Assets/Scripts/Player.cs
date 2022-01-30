@@ -4,8 +4,10 @@ using UnityEngine;
 // USING AGREGADOS
 using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
+using ExitGames.Client.Photon;
+using Photon.Realtime;
 
-public class Player : MonoBehaviourPun
+public class Player : MonoBehaviourPun, IOnEventCallback
 {
     #region Vars
 
@@ -18,6 +20,8 @@ public class Player : MonoBehaviourPun
     private int turnIteration = 1;
     private GameObject handHolder;
     private List<GameObject> carsPerTurn = new List<GameObject>();
+
+    public const byte NotifyTurnChangeEventCode = 1;
 
     #endregion
 
@@ -143,6 +147,34 @@ public class Player : MonoBehaviourPun
                 distanceBetweenCards += 116;
             }
             generateCards = false;
+        }
+    }
+
+
+
+
+    private void OnEnable()
+    {
+        PhotonNetwork.AddCallbackTarget(this);
+    }
+
+    private void OnDisable()
+    {
+        PhotonNetwork.RemoveCallbackTarget(this);
+    }
+
+    public void OnEvent(EventData photonEvent)
+    {
+        byte eventCode = photonEvent.Code;
+        if (eventCode == NotifyTurnChangeEventCode)
+        {
+            object[] data = (object[])photonEvent.CustomData;
+            Vector3 targetPosition = (Vector3)data[0];
+            for (int index = 1; index < data.Length; ++index)
+            {
+                int unitId = (int)data[index];
+                UnitList[unitId].TargetPosition = targetPosition;
+            }
         }
     }
 }

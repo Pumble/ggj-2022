@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using Photon.Realtime;
-
+using ExitGames.Client.Photon;
 
 public class PUN2_RoomController : MonoBehaviourPunCallbacks
 {
@@ -48,7 +48,6 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     public Button endTurnButton;
 
     public const byte NotifyTurnChangeEventCode = 1;
-    public const byte NotifyRoundChangeEventCode = 2;
 
     #endregion
 
@@ -218,6 +217,21 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         Hashtable hashtable = new Hashtable();
         hashtable.Add("turn", turn);
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
+
+        NotifyTurnChangeEvent();
+    }
+
+    private void NotifyTurnChangeEvent()
+    {
+        // Array contains the data to share
+        object[] content = new object[] { round, turn };
+
+        // You would have to set the Receivers to All in order to receive this event on the local client as well
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.All
+        };
+        PhotonNetwork.RaiseEvent(NotifyTurnChangeEventCode, content, raiseEventOptions, SendOptions.SendReliable);
     }
 
     #endregion
