@@ -16,13 +16,13 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     [Header("Tiempo de espera de otros jugadores")]
     public int timeBeforeMatch = 15;
 
-    private Camera _camera;
     private GameManager _gameManager;
 
     [Header("Variables sobre slots")]
     public GameObject slotPrefab;
     public GameObject[] slots;
     public int slotsNumber = 40;
+    public GameObject _board;
 
     [Header("Variables sobre los jugadores")]
     public int playersCount = 4;
@@ -53,7 +53,6 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        _camera = Camera.main;
         _gameManager = FindObjectsOfType<GameManager>()[0];
     }
 
@@ -251,37 +250,45 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     /// </summary>
     private void generatBoard()
     {
-        slots = new GameObject[slotsNumber];
-
-        float x = 0, y = 0.0f, z = 0f;
-        int splitIn = slotsNumber / 4;
-        for (int i = 0, slotIndex = 1; i < slotsNumber; i++, slotIndex++)
+        if (_board != null)
         {
-            // GameObject newSlot = Instantiate(slotPrefab, new Vector3(x, y, z), Quaternion.identity);
-            GameObject newSlot = PhotonNetwork.Instantiate(slotPrefab.name, new Vector3(x, y, z), Quaternion.identity);
-            newSlot.name = "Slot_" + slotIndex;
+            slots = new GameObject[slotsNumber];
 
-            if (slotIndex >= splitIn * 3)
+            float x = 0, y = 0.0f, z = 0f;
+            int splitIn = slotsNumber / 4;
+            for (int i = 0, slotIndex = 1; i < slotsNumber; i++, slotIndex++)
             {
-                x = -1;
-                z++;
-            }
-            else if (slotIndex >= splitIn * 2)
-            {
-                x--;
-                z = -10;
-            }
-            else if (slotIndex >= splitIn)
-            {
-                z--;
-                x = 9;
-            }
-            else
-            {
-                x++;
-            }
+                // GameObject newSlot = Instantiate(slotPrefab, new Vector3(x, y, z), Quaternion.identity);
+                // GameObject newSlot = PhotonNetwork.Instantiate(slotPrefab.name, new Vector3(x, y, z), Quaternion.identity);
 
-            slots[i] = newSlot;
+                GameObject newSlot = Instantiate(slotPrefab);
+                newSlot.transform.SetParent(_board.transform);
+                newSlot.name = "Slot_" + slotIndex;
+
+                if (slotIndex >= splitIn * 3)
+                {
+                    x = -1;
+                    z++;
+                }
+                else if (slotIndex >= splitIn * 2)
+                {
+                    x--;
+                    z = -10;
+                }
+                else if (slotIndex >= splitIn)
+                {
+                    z--;
+                    x = 9;
+                }
+                else
+                {
+                    x++;
+                }
+
+
+
+                slots[i] = newSlot;
+            }
         }
     }
 
@@ -317,12 +324,6 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         playerData.gameManager = _gameManager;
 
         initialSlot.setPlayerInPosition(freePosition, avatar);
-
-        //// ASIGNAR LA CAMARA AL JUGADOR
-        //if (_camera != null && player != null)
-        //{
-        //    _camera.GetComponent<CameraFollow>().target = avatar.transform;
-        //}
     }
 
     /// <summary>
