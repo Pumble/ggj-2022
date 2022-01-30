@@ -14,6 +14,10 @@ public class Player : MonoBehaviourPun
     public Photon.Realtime.Player localPlayer;
     public int PAperTurn = 5;
 
+    private bool generateCards = false;
+    private GameObject handHolder;
+    private List<GameObject> carsPerTurn = new List<GameObject>();
+
     #endregion
 
     #region Events
@@ -23,6 +27,8 @@ public class Player : MonoBehaviourPun
         roomController = FindObjectOfType<PUN2_RoomController>();
         localPlayer = PhotonNetwork.LocalPlayer;
         gameManager = FindObjectOfType<GameManager>();
+
+        handHolder = GameObject.Find("HandHolder");
     }
 
     private void FixedUpdate()
@@ -58,7 +64,12 @@ public class Player : MonoBehaviourPun
                         PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
 
                         // 2- ASIGNAR CARTAS
-
+                        Elements myElement = (Elements)((int)PhotonNetwork.LocalPlayer.CustomProperties["element"]);
+                        carsPerTurn = gameManager.getCardsByType(myElement);
+                        // 2.1- Tenemos que limpiar la mano anterior, tecnicamente, el cardholder
+                        cleanHandHolder();
+                        // 2.1- Añadir las nuevas cartas
+                        generateCards = true; // Esto pone a funcionar el evento on GUI
                     }
                 }
             }
@@ -102,6 +113,30 @@ public class Player : MonoBehaviourPun
             transform.position = Vector3.Lerp(from, to, (elapsedTime / time));
             elapsedTime += Time.deltaTime;
             yield return null;
+        }
+    }
+
+    private void cleanHandHolder()
+    {
+        foreach (Transform child in handHolder.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+    }
+
+    private void OnGUI()
+    {
+        if (generateCards)
+        {
+            int distanceBetweenCards = 116;
+            foreach (GameObject card in carsPerTurn)
+            {
+                GameObject instance = Instantiate(card);
+                instance.transform.SetParent(handHolder.transform);
+                instance.GetComponent<RectTransform>().position = new Vector3(distanceBetweenCards, 76, 0);
+                distanceBetweenCards += 116;
+            }
+            generateCards = false;
         }
     }
 }

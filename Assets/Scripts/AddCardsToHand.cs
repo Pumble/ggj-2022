@@ -8,11 +8,6 @@ public class AddCardsToHand : MonoBehaviour
     public List<GameObject> prefabs = new List<GameObject>();
     public bool generateCards = true;
 
-    private void Start()
-    {
-
-    }
-
     private void OnGUI()
     {
         if (generateCards)

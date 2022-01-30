@@ -37,6 +37,10 @@ public class GameManager : MonoBehaviourPun
     [Header("Sobre las mecanicas")]
     public int PALimitPerPlayer = 10;
 
+    [Header("Sobre las cartas")]
+    public List<GameObject> availableCards = new List<GameObject>();
+    public int cardsPerTurn = 4;
+
     #endregion
 
     public bool MatchInCourse = false;
@@ -161,6 +165,42 @@ public class GameManager : MonoBehaviourPun
             hashtable.Add("life", life);
             to.SetCustomProperties(hashtable);
         }
+    }
+
+    #endregion
+
+    #region Cards Methods
+
+    public List<GameObject> getCardsByType(Elements element)
+    {
+        List<GameObject> cardsPerElement = new List<GameObject>();
+        foreach (GameObject go in availableCards)
+        {
+            Card card = go.GetComponent<Card>();
+            if (card.type == CardType.Trap)
+            {
+                // SI ES TRAMPA LA ASIGNAMOS
+                cardsPerElement.Add(go);
+            }
+            else
+            {
+                if (card.elements.IndexOf(element) != -1)
+                {
+                    // SI LA CARTA TIENE ESTE ELEMENTO, LA ASIGNAMOS
+                    cardsPerElement.Add(go);
+                }
+            }
+        }
+
+        // AHORA YA TENEMOS UNA LISTA DE CARTAS DISPONIBLES, HAY
+        // QUE ESCOGER AL AZAR ENTRE ELLAS Y DEVOLVER LA LISTA REAL
+        List<GameObject> cardsToSend = new List<GameObject>();
+        for (int i = 0; i < cardsPerTurn; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, cardsPerElement.Count);
+            cardsToSend.Add(cardsPerElement[randomIndex]);
+        }
+        return cardsToSend;
     }
 
     #endregion
