@@ -871,7 +871,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &421078964
 Transform:
   m_ObjectHideFlags: 0
@@ -898,7 +898,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 1e5eb5d6f9db48541af1c0a28e714ee7, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.25
+  m_Volume: 0.04
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -2541,7 +2541,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  smoothSpeed: 0.125
+  smoothSpeed: 0
   offset: {x: 2.5, y: 3.5, z: -2.5}
 --- !u!1 &1010359855
 GameObject:
@@ -3123,6 +3123,7 @@ MonoBehaviour:
   defaultLife: 100
   defaultAttack: 10
   defaultRanking: 0
+  statsPlayers: 
   localPlayer: {fileID: 0}
   round: 0
   turn: 0

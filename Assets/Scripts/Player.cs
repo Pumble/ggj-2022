@@ -12,7 +12,8 @@ public class Player : MonoBehaviourPun
     public GameManager gameManager;
     public PUN2_RoomController roomController;
     public Photon.Realtime.Player localPlayer;
-    public int PAperTurn = 5;
+
+    //public int PAperTurn = 5;
 
     #endregion
 
@@ -48,7 +49,11 @@ public class Player : MonoBehaviourPun
                         Debug.Log("Ronda: " + round + ". Turno: " + PhotonNetwork.LocalPlayer.NickName + ". Master turn: " + masterTurn + ", local turn: " + playerTurn);
                         // 1- ASIGNAR PA
                         int currentPA = (int)PhotonNetwork.LocalPlayer.CustomProperties["PA"]; // OBTENER LOS PA
-                        currentPA += PAperTurn; // AÑADIR MAS PA
+
+                        //  PAperTurn lo cambie por  (int)localPlayer.CustomProperties["PAForTurn"] 
+                        currentPA += (int)localPlayer.CustomProperties["PAForTurn"];//PAperTurn; // Aï¿½ADIR MAS PA
+
+
                         if (currentPA > gameManager.PALimitPerPlayer) // SI SE PASA DE 10, LIMITARLO
                         {
                             currentPA = gameManager.PALimitPerPlayer;
@@ -99,7 +104,7 @@ public class Player : MonoBehaviourPun
         }
         if (incrLaps && ((int)(localPlayer.CustomProperties["ranking"])) == 0)
         {
-            localPlayer.CustomProperties["PAForTurn"] = (int)localPlayer.CustomProperties["PAForTurn"] + 1;
+            localPlayer.CustomProperties["PAperTurn"] = (int)localPlayer.CustomProperties["PAForTurn"] + 1;
         }
         // fin
         
