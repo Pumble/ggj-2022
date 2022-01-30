@@ -20,8 +20,6 @@ public class Player : MonoBehaviourPun, IOnEventCallback
     private GameObject handHolder;
     private List<GameObject> carsPerTurn = new List<GameObject>();
 
-    public const byte NotifyTurnChangeEventCode = 1;
-
     #endregion
 
     #region Events
@@ -107,7 +105,9 @@ public class Player : MonoBehaviourPun, IOnEventCallback
     public void OnEvent(EventData photonEvent)
     {
         byte eventCode = photonEvent.Code;
-        if (eventCode == NotifyTurnChangeEventCode)
+        Debug.Log("Evento recibido: " + (int)eventCode);
+
+        if ((int)eventCode == (int)NetworkEvents.TurnChange)
         {
             object[] data = (object[])photonEvent.CustomData;
             int receivedRound = (int)data[0];
@@ -129,7 +129,7 @@ public class Player : MonoBehaviourPun, IOnEventCallback
 
                         if (receivedTurn == playerTurn)
                         {
-                            Debug.Log("Ronda: " + receivedRound + ". Turno: " + PhotonNetwork.LocalPlayer.NickName + ". received turn: " + receivedTurn + ", local turn: " + playerTurn);
+                            Debug.Log("Es mi turno " + PhotonNetwork.LocalPlayer.NickName + "!");
                             // 1- ASIGNAR PA
                             int currentPA = (int)PhotonNetwork.LocalPlayer.CustomProperties["PA"]; // OBTENER LOS PA
                             currentPA += PAperTurn; // AñADIR MAS PA
@@ -143,6 +143,7 @@ public class Player : MonoBehaviourPun, IOnEventCallback
 
                             // 2- ASIGNAR CARTAS
                             Elements myElement = (Elements)((int)PhotonNetwork.LocalPlayer.CustomProperties["element"]);
+                            Debug.Log("Mi elemento es: " + (int)myElement);
                             carsPerTurn = gameManager.getCardsByType(myElement);
                             // 2.1- Tenemos que limpiar la mano anterior, tecnicamente, el cardholder
                             cleanHandHolder();
