@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2742056176629846719, guid: 9ad408ad25d2180489e7d72c7a20341d, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4504512500830937067, guid: 9ad408ad25d2180489e7d72c7a20341d, type: 3}
       propertyPath: m_Name
       value: UI_Card_Earth

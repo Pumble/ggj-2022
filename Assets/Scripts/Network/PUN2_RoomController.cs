@@ -310,6 +310,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         Vector3 position = initialSlot.getLocationByIndex(freePosition) + slots[initialPosition].transform.position;
 
         int skin = PhotonNetwork.LocalPlayer.ActorNumber;
+        Debug.Log(PhotonNetwork.LocalPlayer.NickName + "-->" + PhotonNetwork.LocalPlayer.ActorNumber);
         GameObject avatar = PhotonNetwork.Instantiate(
             cavaliersSkins[skin].name,
             position,

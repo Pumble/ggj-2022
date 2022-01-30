@@ -146,6 +146,14 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 297d443b52dffe540b3551d0d30b1984, type: 2}
+    - target: {fileID: 6346717242602593005, guid: 921b4647bfa57794c8ee44bc65133086, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.593
+      objectReference: {fileID: 0}
+    - target: {fileID: 6347124279309638733, guid: 921b4647bfa57794c8ee44bc65133086, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.635
+      objectReference: {fileID: 0}
     - target: {fileID: 6348572427432478336, guid: 921b4647bfa57794c8ee44bc65133086, type: 3}
       propertyPath: m_RootOrder
       value: 10
@@ -4512,7 +4520,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -100, y: 50}
+  m_AnchoredPosition: {x: -100, y: 200}
   m_SizeDelta: {x: 110, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1952383921
