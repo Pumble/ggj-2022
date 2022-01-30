@@ -23,6 +23,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     public GameObject[] slots;
     public int slotsNumber = 40;
     public GameObject _board;
+    private GameObject _innerBoard;
 
     [Header("Variables sobre los jugadores")]
     public int playersCount = 4;
@@ -54,6 +55,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     private void Awake()
     {
         _gameManager = FindObjectsOfType<GameManager>()[0];
+        _innerBoard = _board.transform.GetChild(0).gameObject;
     }
 
     // Start is called before the first frame update
@@ -254,39 +256,42 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         {
             slots = new GameObject[slotsNumber];
 
-            float x = 0, y = 0.0f, z = 0f;
+            float x = -4.5f, y = 0.01f, z = -4.5f;
             int splitIn = slotsNumber / 4;
+            Vector3 scale = new Vector3(1f, 0.01f, 1f);
             for (int i = 0, slotIndex = 1; i < slotsNumber; i++, slotIndex++)
             {
                 // GameObject newSlot = Instantiate(slotPrefab, new Vector3(x, y, z), Quaternion.identity);
                 // GameObject newSlot = PhotonNetwork.Instantiate(slotPrefab.name, new Vector3(x, y, z), Quaternion.identity);
 
                 GameObject newSlot = Instantiate(slotPrefab);
-                newSlot.transform.SetParent(_board.transform);
+                newSlot.transform.SetParent(_innerBoard.transform);
+                newSlot.transform.localPosition = new Vector3(x, y, z);
+                newSlot.transform.localScale = scale;
+
                 newSlot.name = "Slot_" + slotIndex;
 
                 if (slotIndex >= splitIn * 3)
                 {
-                    x = -1;
-                    z++;
+                    x -= scale.x;
+                    z = -5.5f;
                 }
                 else if (slotIndex >= splitIn * 2)
                 {
-                    x--;
-                    z = -10;
+                    x = 5.5f;
+                    z -= scale.z;
                 }
                 else if (slotIndex >= splitIn)
                 {
-                    z--;
-                    x = 9;
+                    z = 4.5f;
+                    x += scale.x;
                 }
                 else
                 {
-                    x++;
+                    z += scale.z;
                 }
 
-
-
+                newSlot.GetComponent<Slot>().index = slotIndex;
                 slots[i] = newSlot;
             }
         }
