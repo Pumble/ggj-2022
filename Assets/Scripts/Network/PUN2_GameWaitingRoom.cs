@@ -98,7 +98,7 @@ public class PUN2_GameWaitingRoom : MonoBehaviourPunCallbacks
                         if (isEveryoneReady())
                             if (GUILayout.Button("¡Iniciar partida!", GUILayout.Width(125)))
                             {
-                                // setCharacterTypes();
+                                prepareRoomForTheMatch();
                                 PhotonView photonView = PhotonView.Get(this);
                                 photonView.RPC("BeginTimeWaiting", RpcTarget.All, "algo");
                             }
@@ -208,5 +208,14 @@ public class PUN2_GameWaitingRoom : MonoBehaviourPunCallbacks
         waitingForMatch = true;
         timeToBeginLabel.enabled = true;
         InvokeRepeating("updateTimeWaiting", 1f, 1f);
+    }
+
+    private void prepareRoomForTheMatch()
+    {
+        Hashtable hashtable = new Hashtable();
+        hashtable.Add("turn", 0);
+        hashtable.Add("round", 0);
+        hashtable.Add("matchInCourse", false);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
     }
 }

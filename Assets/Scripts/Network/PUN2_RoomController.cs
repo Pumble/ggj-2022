@@ -9,6 +9,8 @@ using Random = UnityEngine.Random;
 
 public class PUN2_RoomController : MonoBehaviourPunCallbacks
 {
+    #region Vars
+
     //Player instance prefab, must be located in the Resources folder
     [Header("Tiempo de espera de otros jugadores")]
     public int timeBeforeMatch = 15;
@@ -37,9 +39,14 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     public int turn = 0;
 
     [Header("Tiempo de las partidas")]
-    public int matchTime = 30;
+    public int turnTime = 30;
     public Text timeLabel;
     private int time;
+
+    [Header("Gestion de la UI")]
+    public Button endTurnButton;
+
+    #endregion
 
     private void Awake()
     {
@@ -60,26 +67,27 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         // We're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
         // PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.position, Quaternion.identity, 0);
 
-        generatBoard();
-        /**
-         * Una vez generado el tablero, cada jugador debera instanciar su personaje,
-         * pero antes, hay que asignarles un elemento
-         */
-        setPlayerElementByActorNumber();
-
-        /**
-         * Ahora debemos colocar los jugadores en el tablero
-         * */
-        setPlayersInInitialPosition(0);
-
         /**
          * Aqui asignamos el turno correspondiente, en base al numero random que
          * sacaron cuando ingresaron a la sala
          */
         setTurnsToPlayer();
 
+        generatBoard();
+
+        /**
+         * Ahora debemos colocar los jugadores en el tablero
+         * */
+        setPlayersInInitialPosition(0);
+
         if (PhotonNetwork.IsMasterClient)
         {
+            Hashtable hashtable = new Hashtable();
+            hashtable.Add("turn", turn);
+            hashtable.Add("round", round);
+            hashtable.Add("matchInCourse", true);
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
+
             PhotonView photonView = PhotonView.Get(this);
             photonView.RPC("beginDownwiseClock", RpcTarget.All);
             photonView.RPC("nextRound", RpcTarget.All);
@@ -110,7 +118,42 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             string isMasterClient = (PhotonNetwork.PlayerList[i].IsMasterClient ? "*" : "");
             int life = (int)PhotonNetwork.PlayerList[i].CustomProperties["life"];
             int attack = (int)PhotonNetwork.PlayerList[i].CustomProperties["attack"];
-            GUI.Label(new Rect(5, 35 + 30 * i, 200, 25), PhotonNetwork.PlayerList[i].ActorNumber + "-" + isMasterClient + PhotonNetwork.PlayerList[i].NickName + "("+ life + ", "+ attack + ")");
+            GUI.Label(new Rect(5, 35 + 30 * i, 200, 25), PhotonNetwork.PlayerList[i].ActorNumber + "-" + isMasterClient + PhotonNetwork.PlayerList[i].NickName + "(" + life + ", " + attack + ")");
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (PhotonNetwork.CurrentRoom != null)
+        {
+            if (PhotonNetwork.LocalPlayer != null)
+            {
+                if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("turn"))
+                {
+                    int masterTurn = (int)PhotonNetwork.CurrentRoom.CustomProperties["turn"];
+                    int playerTurn = (int)PhotonNetwork.LocalPlayer.CustomProperties["turn"];
+                    if (masterTurn == playerTurn)
+                    {
+                        endTurnButton.enabled = true;
+                    }
+                    else
+                    {
+                        endTurnButton.enabled = false;
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("PhotonNetwork.CurrentRoom no contiene la key: turn");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("PhotonNetwork.LocalPlayer es null en PUN2_RoomController.cs");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("PhotonNetwork.CurrentRoom es null en PUN2_RoomController.cs");
         }
     }
 
@@ -129,7 +172,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     [PunRPC]
     void beginDownwiseClock()
     {
-        time = matchTime;
+        time = turnTime;
         timeLabel.enabled = true;
         InvokeRepeating("updateDownwiseClock", 1f, 1f);
     }
@@ -143,6 +186,9 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             // REVISAR QUIEN GANO
             CancelInvoke("updateDownwiseClock");
             timeLabel.enabled = false;
+
+            PhotonView photonView = PhotonView.Get(this);
+            photonView.RPC("nextTurn", RpcTarget.All);
         }
     }
 
@@ -150,29 +196,37 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     void nextRound()
     {
         round++;
+        Hashtable hashtable = new Hashtable();
+        hashtable.Add("round", round);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
     }
 
     [PunRPC]
     void nextTurn()
     {
         turn++;
+        if (turn > PhotonNetwork.PlayerList.Length)
+        {
+            turn = 0;
+            photonView.RPC("nextRound", RpcTarget.All);
+        }
+
+        Hashtable hashtable = new Hashtable();
+        hashtable.Add("turn", turn);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
     }
 
     #endregion
 
-    /// <summary>
-    /// Asignar el elemento a los jugadores en base a su actor number
-    /// </summary>
-    private void setPlayerElementByActorNumber()
+    #region OnClick Events
+
+    public void onClick_EndTurnButton()
     {
-        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
-        {
-            Hashtable hashtable = new Hashtable();
-            Elements element = (Elements)player.ActorNumber;
-            hashtable.Add("element", (int)element);
-            PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
-        }
+        PhotonView photonView = PhotonView.Get(this);
+        photonView.RPC("nextTurn", RpcTarget.All);
     }
+
+    #endregion
 
     /// <summary>
     /// Generate the board, make it with slots
@@ -225,8 +279,9 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         int freePosition = initialSlot.getFreePosition();
         Vector3 position = initialSlot.getLocationByIndex(freePosition) + slots[initialPosition].transform.position;
 
+        int skin = PhotonNetwork.LocalPlayer.ActorNumber;
         GameObject avatar = PhotonNetwork.Instantiate(
-            cavaliersSkins[(int)player.CustomProperties["element"]].name,
+            cavaliersSkins[skin].name,
             position,
             Quaternion.identity
         );
@@ -251,11 +306,15 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         }
     }
 
+    /// <summary>
+    /// Establece en que turno van a jugar los jugadores
+    /// </summary>
     private void setTurnsToPlayer()
     {
         SortedDictionary<int, Photon.Realtime.Player> sortedPlayers = new SortedDictionary<int, Photon.Realtime.Player>();
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
+            Debug.Log(player.NickName + ", order: " + (int)player.CustomProperties["order"]);
             sortedPlayers.Add((int)player.CustomProperties["order"], player);
         }
 
@@ -264,7 +323,9 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         {
             Hashtable hashtable = new Hashtable();
             hashtable.Add("turn", localTurn);
-            PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
+            player.Value.SetCustomProperties(hashtable);
+            Debug.Log(player.Value.NickName + " va de " + localTurn + "°");
+            localTurn++;
         }
     }
 }
