@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
-using Random = UnityEngine.Random;
+using Photon.Realtime;
+
 
 public class PUN2_RoomController : MonoBehaviourPunCallbacks
 {
@@ -25,9 +26,9 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
 
     [Header("Variables sobre los jugadores")]
     public int playersCount = 4;
-    [Header("Si algún prefab no se encuentra, se utiliza este")]
+    [Header("Si algï¿½n prefab no se encuentra, se utiliza este")]
     public GameObject defaultPrefab;
-    [Header("Arrays de prefabs que se utilizarán en las partidas online, debe estar en: Resources")]
+    [Header("Arrays de prefabs que se utilizarï¿½n en las partidas online, debe estar en: Resources")]
     public List<GameObject> cavaliersSkins;
 
     public int defaultLife = 100;
@@ -45,6 +46,9 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
 
     [Header("Gestion de la UI")]
     public Button endTurnButton;
+
+    public const byte NotifyTurnChangeEventCode = 1;
+    public const byte NotifyRoundChangeEventCode = 2;
 
     #endregion
 
@@ -292,6 +296,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         hashtable.Add("attack", defaultAttack);
         hashtable.Add("life", defaultLife);
         hashtable.Add("slot", initialPosition);
+        hashtable.Add("element", skin);
         PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
 
         Player playerData = avatar.GetComponent<Player>();
@@ -299,11 +304,11 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
 
         initialSlot.setPlayerInPosition(freePosition, avatar);
 
-        // ASIGNAR LA CAMARA AL JUGADOR
-        if (_camera != null && player != null)
-        {
-            _camera.GetComponent<CameraFollow>().target = avatar.transform;
-        }
+        //// ASIGNAR LA CAMARA AL JUGADOR
+        //if (_camera != null && player != null)
+        //{
+        //    _camera.GetComponent<CameraFollow>().target = avatar.transform;
+        //}
     }
 
     /// <summary>
@@ -314,7 +319,6 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         SortedDictionary<int, Photon.Realtime.Player> sortedPlayers = new SortedDictionary<int, Photon.Realtime.Player>();
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
-            Debug.Log(player.NickName + ", order: " + (int)player.CustomProperties["order"]);
             sortedPlayers.Add((int)player.CustomProperties["order"], player);
         }
 
@@ -324,7 +328,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             Hashtable hashtable = new Hashtable();
             hashtable.Add("turn", localTurn);
             player.Value.SetCustomProperties(hashtable);
-            Debug.Log(player.Value.NickName + " va de " + localTurn + "°");
+            Debug.Log(player.Value.NickName + " va de " + localTurn + "ï¿½, " + (int)player.Value.CustomProperties["order"]);
             localTurn++;
         }
     }

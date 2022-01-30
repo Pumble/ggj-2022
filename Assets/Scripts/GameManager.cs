@@ -195,10 +195,17 @@ public class GameManager : MonoBehaviourPun
         // AHORA YA TENEMOS UNA LISTA DE CARTAS DISPONIBLES, HAY
         // QUE ESCOGER AL AZAR ENTRE ELLAS Y DEVOLVER LA LISTA REAL
         List<GameObject> cardsToSend = new List<GameObject>();
-        for (int i = 0; i < cardsPerTurn; i++)
+        if (cardsPerElement.Count > 0)
         {
-            int randomIndex = UnityEngine.Random.Range(0, cardsPerElement.Count);
-            cardsToSend.Add(cardsPerElement[randomIndex]);
+            for (int i = 0; i < cardsPerTurn; i++)
+            {
+                int randomIndex = UnityEngine.Random.Range(0, cardsPerElement.Count);
+                cardsToSend.Add(cardsPerElement[randomIndex]);
+            }
+        }
+        else
+        {
+            Debug.Log("No se encontraron cartas con el elemento dado para entregar");
         }
         return cardsToSend;
     }
