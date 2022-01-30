@@ -39,10 +39,11 @@ public class Player : MonoBehaviourPun
                 {
                     int masterTurn = (int)PhotonNetwork.CurrentRoom.CustomProperties["turn"];
                     int playerTurn = (int)PhotonNetwork.LocalPlayer.CustomProperties["turn"];
+                    int round = (int)PhotonNetwork.CurrentRoom.CustomProperties["round"];
 
                     if (masterTurn == playerTurn)
                     {
-                        Debug.Log("Es mi turno: " + PhotonNetwork.LocalPlayer.NickName + ". Master turn: " + masterTurn + ", local turn: " + playerTurn);
+                        Debug.Log("Ronda: " + round + ". Turno: " + PhotonNetwork.LocalPlayer.NickName + ". Master turn: " + masterTurn + ", local turn: " + playerTurn);
                     }
                 }
             }

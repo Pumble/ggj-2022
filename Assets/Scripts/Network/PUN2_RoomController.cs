@@ -205,6 +205,12 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     void nextTurn()
     {
         turn++;
+        if (turn > PhotonNetwork.PlayerList.Length)
+        {
+            turn = 0;
+            photonView.RPC("nextRound", RpcTarget.All);
+        }
+
         Hashtable hashtable = new Hashtable();
         hashtable.Add("turn", turn);
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
@@ -273,8 +279,9 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         int freePosition = initialSlot.getFreePosition();
         Vector3 position = initialSlot.getLocationByIndex(freePosition) + slots[initialPosition].transform.position;
 
+        int skin = PhotonNetwork.LocalPlayer.ActorNumber;
         GameObject avatar = PhotonNetwork.Instantiate(
-            cavaliersSkins[(int)player.CustomProperties["element"]].name,
+            cavaliersSkins[skin].name,
             position,
             Quaternion.identity
         );
