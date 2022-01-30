@@ -342,7 +342,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             Hashtable hashtable = new Hashtable();
             hashtable.Add("turn", localTurn);
             player.Value.SetCustomProperties(hashtable);
-            Debug.Log(player.Value.NickName + " va de " + localTurn + "�, " + (int)player.Value.CustomProperties["order"]);
+            Debug.Log(player.Value.NickName + " va de " + localTurn + "°, " + (int)player.Value.CustomProperties["order"]);
             localTurn++;
         }
     }

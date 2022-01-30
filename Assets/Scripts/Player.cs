@@ -17,7 +17,6 @@ public class Player : MonoBehaviourPun, IOnEventCallback
     public int PAperTurn = 5;
 
     private bool generateCards = false;
-    private int turnIteration = 1;
     private GameObject handHolder;
     private List<GameObject> carsPerTurn = new List<GameObject>();
 
@@ -34,64 +33,6 @@ public class Player : MonoBehaviourPun, IOnEventCallback
         gameManager = FindObjectOfType<GameManager>();
 
         handHolder = GameObject.Find("HandHolder");
-    }
-
-    private void FixedUpdate()
-    {
-        if (PhotonNetwork.CurrentRoom != null)
-        {
-            if (PhotonNetwork.LocalPlayer != null)
-            {
-                bool matchInCourse = false;
-                if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("matchInCourse"))
-                {
-                    matchInCourse = (bool)PhotonNetwork.CurrentRoom.CustomProperties["matchInCourse"];
-                }
-
-                if (matchInCourse == true)
-                {
-                    int masterTurn = (int)PhotonNetwork.CurrentRoom.CustomProperties["turn"];
-                    int playerTurn = (int)PhotonNetwork.LocalPlayer.CustomProperties["turn"];
-                    int round = (int)PhotonNetwork.CurrentRoom.CustomProperties["round"];
-
-                    if (masterTurn == playerTurn)
-                    {
-                        if (turnIteration == 1)
-                        {
-                            Debug.Log("Ronda: " + round + ". Turno: " + PhotonNetwork.LocalPlayer.NickName + ". Master turn: " + masterTurn + ", local turn: " + playerTurn);
-                            // 1- ASIGNAR PA
-                            int currentPA = (int)PhotonNetwork.LocalPlayer.CustomProperties["PA"]; // OBTENER LOS PA
-                            currentPA += PAperTurn; // AñADIR MAS PA
-                            if (currentPA > gameManager.PALimitPerPlayer) // SI SE PASA DE 10, LIMITARLO
-                            {
-                                currentPA = gameManager.PALimitPerPlayer;
-                            }
-                            Hashtable hashtable = new Hashtable();
-                            hashtable.Add("PA", currentPA);
-                            PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
-
-                            // 2- ASIGNAR CARTAS
-                            Elements myElement = (Elements)((int)PhotonNetwork.LocalPlayer.CustomProperties["element"]);
-                            carsPerTurn = gameManager.getCardsByType(myElement);
-                            // 2.1- Tenemos que limpiar la mano anterior, tecnicamente, el cardholder
-                            cleanHandHolder();
-                            // 2.1- Añadir las nuevas cartas
-                            generateCards = true; // Esto pone a funcionar el evento on GUI
-
-                            turnIteration++;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogWarning("PhotonNetwork.LocalPlayer es null en Player.cs");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("PhotonNetwork.CurrentRoom es null en Player.cs");
-        }
     }
 
     #endregion
@@ -169,11 +110,55 @@ public class Player : MonoBehaviourPun, IOnEventCallback
         if (eventCode == NotifyTurnChangeEventCode)
         {
             object[] data = (object[])photonEvent.CustomData;
-            Vector3 targetPosition = (Vector3)data[0];
-            for (int index = 1; index < data.Length; ++index)
+            int receivedRound = (int)data[0];
+            int receivedTurn = (int)data[1];
+
+            if (PhotonNetwork.CurrentRoom != null)
             {
-                int unitId = (int)data[index];
-                UnitList[unitId].TargetPosition = targetPosition;
+                if (PhotonNetwork.LocalPlayer != null)
+                {
+                    bool matchInCourse = false;
+                    if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("matchInCourse"))
+                    {
+                        matchInCourse = (bool)PhotonNetwork.CurrentRoom.CustomProperties["matchInCourse"];
+                    }
+
+                    if (matchInCourse == true)
+                    {
+                        int playerTurn = (int)PhotonNetwork.LocalPlayer.CustomProperties["turn"];
+
+                        if (receivedTurn == playerTurn)
+                        {
+                            Debug.Log("Ronda: " + receivedRound + ". Turno: " + PhotonNetwork.LocalPlayer.NickName + ". received turn: " + receivedTurn + ", local turn: " + playerTurn);
+                            // 1- ASIGNAR PA
+                            int currentPA = (int)PhotonNetwork.LocalPlayer.CustomProperties["PA"]; // OBTENER LOS PA
+                            currentPA += PAperTurn; // AñADIR MAS PA
+                            if (currentPA > gameManager.PALimitPerPlayer) // SI SE PASA DE 10, LIMITARLO
+                            {
+                                currentPA = gameManager.PALimitPerPlayer;
+                            }
+                            Hashtable hashtable = new Hashtable();
+                            hashtable.Add("PA", currentPA);
+                            PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
+
+                            // 2- ASIGNAR CARTAS
+                            Elements myElement = (Elements)((int)PhotonNetwork.LocalPlayer.CustomProperties["element"]);
+                            carsPerTurn = gameManager.getCardsByType(myElement);
+                            // 2.1- Tenemos que limpiar la mano anterior, tecnicamente, el cardholder
+                            cleanHandHolder();
+                            // 2.1- Añadir las nuevas cartas
+                            generateCards = true; // Esto pone a funcionar el evento on GUI
+                        }
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("PhotonNetwork.LocalPlayer es null en Player.cs");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("PhotonNetwork.CurrentRoom es null en Player.cs");
             }
         }
     }
