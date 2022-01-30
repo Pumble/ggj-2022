@@ -215,8 +215,15 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
 
         if ((true/*a == 1*/) && ((int)player.CustomProperties["shields"] < 2) && ((int)player.CustomProperties["PA"] >= 2))
         {
-            player.CustomProperties["shields"] = (int)player.CustomProperties["shields"] + 1;
-            player.CustomProperties["PA"] = (int)player.CustomProperties["PA"] - 2;
+            int shields = (int)player.CustomProperties["shields"] + 1;
+            int PA = (int)player.CustomProperties["PA"] - 2;
+
+            Hashtable hashtable = new Hashtable();
+            hashtable.Add("shields", shields);
+            player.SetCustomProperties(hashtable);
+
+            hashtable.Add("PA", PA);
+            player.SetCustomProperties(hashtable);
         }
     }
     void OnGUI()
