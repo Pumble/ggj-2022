@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviourPun
 
     public Text txtGameResult;
 
-    public GameObject[] playersRanking;
+    public Photon.Realtime.Player[] playersRanking;
     public List<Text> txtRankings = new List<Text>();
 
     public Text txtNamePlayer;
@@ -33,6 +33,12 @@ public class GameManager : MonoBehaviourPun
     public Text txtPA;
     public Text txtShield;
     public RawImage imgProfile;
+
+    // Imagenes de perfil de los jugadores
+    public Texture imgProfileWater = null;
+    public Texture imgProfileWind = null;
+    public Texture imgProfileEarth = null;
+    public Texture imgProfileFire = null;
 
     [Header("Sobre las mecanicas")]
     public int PALimitPerPlayer = 10;
@@ -45,8 +51,37 @@ public class GameManager : MonoBehaviourPun
     void Start()
     {
         StarMusic();
-    }
 
+        playersRanking = PhotonNetwork.PlayerList;
+
+        // Cargar imagen de perfil
+        /*
+        Debug.Log("Numero del elemento" + (int)PhotonNetwork.LocalPlayer.CustomProperties["element"]);
+        loadImgProfile((int)PhotonNetwork.LocalPlayer.CustomProperties["element"]);
+        */
+    }
+    public void loadImgProfile(int element)
+    {// imgProfile.GetComponent<RawImage>().texture = playerLocalHost.GetComponent<Player>().imgProfile;
+        Debug.Log("El elemento que llego" + element);
+        switch (element)
+        {
+            case 1:
+                imgProfile.GetComponent<RawImage>().texture = imgProfileFire;
+                break;
+            case 2:
+                imgProfile.GetComponent<RawImage>().texture = imgProfileWater;
+                break;
+            case 3:
+                imgProfile.GetComponent<RawImage>().texture = imgProfileEarth;
+                break;
+            case 4:
+                imgProfile.GetComponent<RawImage>().texture = imgProfileWind;
+                break;
+            default:
+                imgProfile.GetComponent<RawImage>().texture = imgProfileWater;
+                break;
+        }
+    }
     // Update is called once per frame
     void LateUpdate()
     {
@@ -87,9 +122,9 @@ public class GameManager : MonoBehaviourPun
                 //Game
                 txtGameTurnTime.text = gameTurnTime.ToString();
 
-                for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+                for (int i = 0; i < playersRanking.Length; i++)
                 {
-                    Photon.Realtime.Player p = PhotonNetwork.PlayerList[i];
+                    Photon.Realtime.Player p = playersRanking[i];
                     txtRankings[i].text = p.NickName;
                 }
             }
@@ -98,7 +133,8 @@ public class GameManager : MonoBehaviourPun
                 Debug.LogWarning("PhotonNetwork.LocalPlayer no existe en GameManager.cs/updateStatsUI");
             }
         }
-        else{
+        else
+        {
             Debug.Log("photonView.IsMine es falso");
         }
     }

@@ -51,7 +51,7 @@ public class Player : MonoBehaviourPun
                         int currentPA = (int)PhotonNetwork.LocalPlayer.CustomProperties["PA"]; // OBTENER LOS PA
 
                         //  PAperTurn lo cambie por  (int)localPlayer.CustomProperties["PAForTurn"] 
-                        currentPA += (int)localPlayer.CustomProperties["PAForTurn"];//PAperTurn; // A�ADIR MAS PA
+                        currentPA += (int)PhotonNetwork.LocalPlayer.CustomProperties["PAperTurn"];//PAperTurn; // A�ADIR MAS PA
 
 
                         if (currentPA > gameManager.PALimitPerPlayer) // SI SE PASA DE 10, LIMITARLO

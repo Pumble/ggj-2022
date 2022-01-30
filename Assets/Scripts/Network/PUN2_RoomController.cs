@@ -24,6 +24,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     public int slotsNumber = 40;
 
     [Header("Variables sobre los jugadores")]
+
     public int playersCount = 4;
     [Header("Si alg�n prefab no se encuentra, se utiliza este")]
     public GameObject defaultPrefab;
@@ -50,6 +51,8 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
 
     [Header("Gestion de la UI")]
     public Button endTurnButton;
+
+    public GameObject pnlBuyShield;
 
     #endregion
 
@@ -84,7 +87,10 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
          * Ahora debemos colocar los jugadores en el tablero
          * */
         setPlayersInInitialPosition(0);
-
+        // Cargar imagen de perfil
+        //Debug.Log("Numero del elemento" + (int)PhotonNetwork.LocalPlayer.CustomProperties["element"]);
+        //_gameManager.loadImgProfile((int)PhotonNetwork.LocalPlayer.CustomProperties["element"]);
+        //
         if (PhotonNetwork.IsMasterClient)
         {
             Hashtable hashtable = new Hashtable();
@@ -101,13 +107,14 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             _gameManager.MatchInCourse = true;
         }
     }
+
     public void getStatsPlayer(int numberPlayers, int index)
     {
         statsPlayers = new int[numberPlayers];
 
         for (int i = 0; i < numberPlayers; i++)
         {
-            Photon.Realtime.Player player = PhotonNetwork.PlayerList[i];
+            Photon.Realtime.Player player = _gameManager.playersRanking[i];
             switch (index)
             {
                 case 0:
@@ -129,7 +136,8 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     }
     private void sortRanking()
     {
-        int numberPlayers = PhotonNetwork.PlayerList.Length;
+        _gameManager.playersRanking = PhotonNetwork.PlayerList;
+        int numberPlayers = _gameManager.playersRanking.Length;
         int a = 0;
         int aux = 0;
         int mx = 0;
@@ -163,8 +171,9 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
                 }
             }
         }
-        for(int i = 0; i < numberPlayers; i++){
-            PhotonNetwork.PlayerList[i].CustomProperties["ranking"] = i;
+        for (int i = 0; i < numberPlayers; i++)
+        {
+            _gameManager.playersRanking[i].CustomProperties["ranking"] = i;
         }
     }
     private void sortMaximum(int a, int aux, Photon.Realtime.Player auxPhoton, int mx, int index, int numberPlayers)
@@ -180,13 +189,32 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
                 }
             }
             aux = statsPlayers[i];
-            auxPhoton = PhotonNetwork.PlayerList[i];
+            auxPhoton = _gameManager.playersRanking[i];
 
             statsPlayers[i] = statsPlayers[mx];
-            PhotonNetwork.PlayerList[i] = PhotonNetwork.PlayerList[mx];
+            _gameManager.playersRanking[i] = _gameManager.playersRanking[mx];
 
             statsPlayers[mx] = aux;
-            PhotonNetwork.PlayerList[mx] = auxPhoton;
+            _gameManager.playersRanking[mx] = auxPhoton;
+        }
+    }
+    public void menuShield()
+    { // click en Shield
+        pnlBuyShield.SetActive(true);
+    }
+    public void cancelGetShield()
+    { // cancel
+        pnlBuyShield.SetActive(false);
+    }
+    public void getShield() // Aceptar
+    {
+        Photon.Realtime.Player player = PhotonNetwork.LocalPlayer;
+        int a = (int)player.CustomProperties["turn"];
+
+        if ((true/*a == 1*/) && ((int)player.CustomProperties["shields"] < 2) && ((int)player.CustomProperties["PA"] >= 2))
+        {
+            player.CustomProperties["shields"] = (int)player.CustomProperties["shields"] + 1;
+            player.CustomProperties["PA"] = (int)player.CustomProperties["PA"] -2;
         }
     }
     void OnGUI()
@@ -377,35 +405,46 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         Vector3 position = initialSlot.getLocationByIndex(freePosition) + slots[initialPosition].transform.position;
 
         int skin = PhotonNetwork.LocalPlayer.ActorNumber;
-        GameObject avatar = PhotonNetwork.Instantiate(
+
+        Debug.Log("initialSlot =" + initialSlot + "freePosition =" + freePosition + "Skin =" + skin);
+
+        try
+        {
+            GameObject avatar = PhotonNetwork.Instantiate(
             cavaliersSkins[skin].name,
             position,
             Quaternion.identity
         );
-        avatar.name = player.NickName;
+            avatar.name = player.NickName;
+            // ASIGNAR SLOT
+            Hashtable hashtable = new Hashtable();
+            hashtable.Add("attack", defaultAttack);
+            hashtable.Add("life", defaultLife);
+            hashtable.Add("slot", initialPosition);
+            hashtable.Add("element", skin);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
 
-        // ASIGNAR SLOT
-        Hashtable hashtable = new Hashtable();
-        hashtable.Add("attack", defaultAttack);
-        hashtable.Add("life", defaultLife);
-        hashtable.Add("slot", initialPosition);
-        hashtable.Add("ranking", defaultRanking);
+            _gameManager.loadImgProfile(skin);
 
-        //    hashtable.Add("ranking", defaultRanking);                       987*sdfgsdfg987
+            Player playerData = avatar.GetComponent<Player>();
+            playerData.gameManager = _gameManager;
 
-        PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
+            initialSlot.setPlayerInPosition(freePosition, avatar);
 
-        Player playerData = avatar.GetComponent<Player>();
-        playerData.gameManager = _gameManager;
-
-        initialSlot.setPlayerInPosition(freePosition, avatar);
-
-        // ASIGNAR LA CAMARA AL JUGADOR
-        if (_camera != null && player != null)
-        {
-            _camera.GetComponent<CameraFollow>().target = avatar.transform;
         }
+        catch (Exception e)
+        {
+            Debug.Log("Falla aqui");
+        }
+
+
+        //// ASIGNAR LA CAMARA AL JUGADOR
+        //if (_camera != null && player != null)
+        //{
+        //    _camera.GetComponent<CameraFollow>().target = avatar.transform;
+        //}
     }
+
 
     /// <summary>
     /// Establece en que turno van a jugar los jugadores

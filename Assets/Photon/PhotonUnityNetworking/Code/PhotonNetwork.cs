@@ -64,7 +64,7 @@ namespace Photon.Pun
     public static partial class PhotonNetwork
     {
         /// <summary>Version number of PUN. Used in the AppVersion, which separates your playerbase in matchmaking.</summary>
-        public const string PunVersion = "2.37";
+        public const string PunVersion = "2.40";
 
         /// <summary>Version number of your game. Setting this updates the AppVersion, which separates your playerbase in matchmaking.</summary>
         /// <remarks>
@@ -377,7 +377,7 @@ namespace Photon.Pun
                     // TODO: implement more effectively. maybe cache?!
                     return room.Players.Values.OrderBy((x) => x.ActorNumber).ToArray();
                 }
-                return new Player[0]; // *************** porque solo esta retornando el primer elemento???
+                return new Player[0];
             }
         }
 
