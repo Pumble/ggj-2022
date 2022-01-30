@@ -29,12 +29,21 @@ public class Player : MonoBehaviourPun
         {
             if (PhotonNetwork.LocalPlayer != null)
             {
-                int masterTurn = (int)PhotonNetwork.CurrentRoom.CustomProperties["turn"];
-                int playerTurn = (int)PhotonNetwork.LocalPlayer.CustomProperties["turn"];
-
-                if (masterTurn == playerTurn)
+                bool matchInCourse = false;
+                if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("matchInCourse"))
                 {
-                    Debug.Log("Es mi turno: " + PhotonNetwork.LocalPlayer.NickName + ". Master turn: " + masterTurn + ", local turn: " + playerTurn);
+                    matchInCourse = (bool)PhotonNetwork.CurrentRoom.CustomProperties["matchInCourse"];
+                }
+
+                if (matchInCourse == true)
+                {
+                    int masterTurn = (int)PhotonNetwork.CurrentRoom.CustomProperties["turn"];
+                    int playerTurn = (int)PhotonNetwork.LocalPlayer.CustomProperties["turn"];
+
+                    if (masterTurn == playerTurn)
+                    {
+                        Debug.Log("Es mi turno: " + PhotonNetwork.LocalPlayer.NickName + ". Master turn: " + masterTurn + ", local turn: " + playerTurn);
+                    }
                 }
             }
             else

@@ -196,7 +196,7 @@ public class PUN2_GameLobby : MonoBehaviourPunCallbacks
         hashtable.Add("attack", 0);
         hashtable.Add("life", 0);
         hashtable.Add("slot", 0);
-        hashtable.Add("element", 1);
+        hashtable.Add("element", PhotonNetwork.LocalPlayer.ActorNumber);
         hashtable.Add("order", UnityEngine.Random.Range(1, 100));
         hashtable.Add("turn", 1);
         hashtable.Add("PA", 1);
