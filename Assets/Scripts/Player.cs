@@ -15,6 +15,7 @@ public class Player : MonoBehaviourPun
     public int PAperTurn = 5;
 
     private bool generateCards = false;
+    private int turnIteration = 1;
     private GameObject handHolder;
     private List<GameObject> carsPerTurn = new List<GameObject>();
 
@@ -51,25 +52,30 @@ public class Player : MonoBehaviourPun
 
                     if (masterTurn == playerTurn)
                     {
-                        Debug.Log("Ronda: " + round + ". Turno: " + PhotonNetwork.LocalPlayer.NickName + ". Master turn: " + masterTurn + ", local turn: " + playerTurn);
-                        // 1- ASIGNAR PA
-                        int currentPA = (int)PhotonNetwork.LocalPlayer.CustomProperties["PA"]; // OBTENER LOS PA
-                        currentPA += PAperTurn; // AÑADIR MAS PA
-                        if (currentPA > gameManager.PALimitPerPlayer) // SI SE PASA DE 10, LIMITARLO
+                        if (turnIteration == 1)
                         {
-                            currentPA = gameManager.PALimitPerPlayer;
-                        }
-                        Hashtable hashtable = new Hashtable();
-                        hashtable.Add("PA", currentPA);
-                        PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
+                            Debug.Log("Ronda: " + round + ". Turno: " + PhotonNetwork.LocalPlayer.NickName + ". Master turn: " + masterTurn + ", local turn: " + playerTurn);
+                            // 1- ASIGNAR PA
+                            int currentPA = (int)PhotonNetwork.LocalPlayer.CustomProperties["PA"]; // OBTENER LOS PA
+                            currentPA += PAperTurn; // AÃ±ADIR MAS PA
+                            if (currentPA > gameManager.PALimitPerPlayer) // SI SE PASA DE 10, LIMITARLO
+                            {
+                                currentPA = gameManager.PALimitPerPlayer;
+                            }
+                            Hashtable hashtable = new Hashtable();
+                            hashtable.Add("PA", currentPA);
+                            PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
 
-                        // 2- ASIGNAR CARTAS
-                        Elements myElement = (Elements)((int)PhotonNetwork.LocalPlayer.CustomProperties["element"]);
-                        carsPerTurn = gameManager.getCardsByType(myElement);
-                        // 2.1- Tenemos que limpiar la mano anterior, tecnicamente, el cardholder
-                        cleanHandHolder();
-                        // 2.1- Añadir las nuevas cartas
-                        generateCards = true; // Esto pone a funcionar el evento on GUI
+                            // 2- ASIGNAR CARTAS
+                            Elements myElement = (Elements)((int)PhotonNetwork.LocalPlayer.CustomProperties["element"]);
+                            carsPerTurn = gameManager.getCardsByType(myElement);
+                            // 2.1- Tenemos que limpiar la mano anterior, tecnicamente, el cardholder
+                            cleanHandHolder();
+                            // 2.1- AÃ±adir las nuevas cartas
+                            generateCards = true; // Esto pone a funcionar el evento on GUI
+
+                            turnIteration++;
+                        }
                     }
                 }
             }
