@@ -9,18 +9,15 @@ EditorBuildSettings:
     path: Assets/Scenes/GameIntro.unity
     guid: 34bd876fca6356a448b54443685a0997
   - enabled: 1
-    path: Assets/Scenes/GameLobby.unity
-    guid: a767d66ee3198c14abf47db101ea584b
-  - enabled: 1
     path: Assets/Scenes/GameHelp.unity
     guid: 1e0f2ad01abe48844818509acc75bdab
+  - enabled: 1
+    path: Assets/Scenes/GameLobby.unity
+    guid: a767d66ee3198c14abf47db101ea584b
   - enabled: 1
     path: Assets/Scenes/GameWaitingRoom.unity
     guid: ddcb3aa453e929342af6d091e2b65576
   - enabled: 1
     path: Assets/Scenes/GameLevel_Juan.unity
     guid: 4c09e60997082404a930e40686159f0f
-  - enabled: 0
-    path: Assets/Scenes/gameScene.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
+using System.Runtime;
 
 /*
  * REFERENCIAS
@@ -33,8 +34,7 @@ public class Card : MonoBehaviour
     #region VARS
 
     public string title;
-    public Elements element;
-    public CustomKeyValuePair<Elements, int>[] stats;
+    public List<Elements> elements;
     public CardRenderType renderType;
     public CardType type;
 
@@ -54,5 +54,31 @@ public class Card : MonoBehaviour
         {
             videoPlayer.enabled = true;
         }
+
+        // Display the tooltip from the element that has mouseover or keyboard focus
+        GUI.Label(new Rect(10, 40, 100, 40), GUI.tooltip);
+    }
+
+    public List<CustomKeyValuePair<Elements, int>> getStats()
+    {
+        List<CustomKeyValuePair<Elements, int>> stats = new List<CustomKeyValuePair<Elements, int>>();
+
+        foreach (Elements element in (Elements[])System.Enum.GetValues(typeof(Elements)))
+        {
+            if (elements.IndexOf(element) != -1)
+            {
+                stats.Add(new CustomKeyValuePair<Elements, int>(element, 10));
+            }
+            else
+            {
+                stats.Add(new CustomKeyValuePair<Elements, int>(element, 0));
+            }
+        }
+        return stats;
+    }
+
+    public void OnClick_SelectCard()
+    {
+        Debug.Log("carta seleccionada: " + title);
     }
 }
