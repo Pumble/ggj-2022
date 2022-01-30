@@ -26,6 +26,7 @@ public class Slot : MonoBehaviour
     public int playersCount = 4;
     public InnerPosition[] positions;
     public Card card = null;
+    public int index = 0;
 
     #endregion
 

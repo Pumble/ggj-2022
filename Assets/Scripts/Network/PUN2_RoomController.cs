@@ -5,7 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
-using Random = UnityEngine.Random;
+using Photon.Realtime;
+using ExitGames.Client.Photon;
 
 public class PUN2_RoomController : MonoBehaviourPunCallbacks
 {
@@ -15,13 +16,14 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     [Header("Tiempo de espera de otros jugadores")]
     public int timeBeforeMatch = 15;
 
-    private Camera _camera;
     private GameManager _gameManager;
 
     [Header("Variables sobre slots")]
     public GameObject slotPrefab;
     public GameObject[] slots;
     public int slotsNumber = 40;
+    public GameObject _board;
+    private GameObject _innerBoard;
 
     [Header("Variables sobre los jugadores")]
 
@@ -58,8 +60,8 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        _camera = Camera.main;
         _gameManager = FindObjectsOfType<GameManager>()[0];
+        _innerBoard = _board.transform.GetChild(0).gameObject;
     }
 
     // Start is called before the first frame update
@@ -332,13 +334,30 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         turn++;
         if (turn > PhotonNetwork.PlayerList.Length)
         {
-            turn = 0;
+            turn = 1;
             photonView.RPC("nextRound", RpcTarget.All);
         }
 
         Hashtable hashtable = new Hashtable();
         hashtable.Add("turn", turn);
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
+
+        Debug.Log("Iniciando --> Ronda: " + round + ",Turno #" + turn);
+
+        NotifyTurnChangeEvent();
+    }
+
+    private void NotifyTurnChangeEvent()
+    {
+        // Array contains the data to share
+        object[] content = new object[] { round, turn };
+
+        // You would have to set the Receivers to All in order to receive this event on the local client as well
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions
+        {
+            Receivers = ReceiverGroup.All
+        };
+        PhotonNetwork.RaiseEvent((int)NetworkEvents.TurnChange, content, raiseEventOptions, SendOptions.SendReliable);
     }
 
     #endregion
@@ -358,37 +377,48 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     /// </summary>
     private void generatBoard()
     {
-        slots = new GameObject[slotsNumber];
-
-        float x = 0, y = 0.0f, z = 0f;
-        int splitIn = slotsNumber / 4;
-        for (int i = 0, slotIndex = 1; i < slotsNumber; i++, slotIndex++)
+        if (_board != null)
         {
-            // GameObject newSlot = Instantiate(slotPrefab, new Vector3(x, y, z), Quaternion.identity);
-            GameObject newSlot = PhotonNetwork.Instantiate(slotPrefab.name, new Vector3(x, y, z), Quaternion.identity);
-            newSlot.name = "Slot_" + slotIndex;
+            slots = new GameObject[slotsNumber];
 
-            if (slotIndex >= splitIn * 3)
+            float x = -4.5f, y = 0.01f, z = -4.5f;
+            int splitIn = slotsNumber / 4;
+            Vector3 scale = new Vector3(1f, 0.01f, 1f);
+            for (int i = 0, slotIndex = 1; i < slotsNumber; i++, slotIndex++)
             {
-                x = -1;
-                z++;
-            }
-            else if (slotIndex >= splitIn * 2)
-            {
-                x--;
-                z = -10;
-            }
-            else if (slotIndex >= splitIn)
-            {
-                z--;
-                x = 9;
-            }
-            else
-            {
-                x++;
-            }
+                // GameObject newSlot = Instantiate(slotPrefab, new Vector3(x, y, z), Quaternion.identity);
+                // GameObject newSlot = PhotonNetwork.Instantiate(slotPrefab.name, new Vector3(x, y, z), Quaternion.identity);
 
-            slots[i] = newSlot;
+                GameObject newSlot = Instantiate(slotPrefab);
+                newSlot.transform.SetParent(_innerBoard.transform);
+                newSlot.transform.localPosition = new Vector3(x, y, z);
+                newSlot.transform.localScale = scale;
+
+                newSlot.name = "Slot_" + slotIndex;
+
+                if (slotIndex >= splitIn * 3)
+                {
+                    x -= scale.x;
+                    z = -5.5f;
+                }
+                else if (slotIndex >= splitIn * 2)
+                {
+                    x = 5.5f;
+                    z -= scale.z;
+                }
+                else if (slotIndex >= splitIn)
+                {
+                    z = 4.5f;
+                    x += scale.x;
+                }
+                else
+                {
+                    z += scale.z;
+                }
+
+                newSlot.GetComponent<Slot>().index = slotIndex;
+                slots[i] = newSlot;
+            }
         }
     }
 
@@ -443,6 +473,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         //{
         //    _camera.GetComponent<CameraFollow>().target = avatar.transform;
         //}
+        initialSlot.setPlayerInPosition(freePosition, avatar);
     }
 
 
@@ -454,7 +485,6 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         SortedDictionary<int, Photon.Realtime.Player> sortedPlayers = new SortedDictionary<int, Photon.Realtime.Player>();
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
-            Debug.Log(player.NickName + ", order: " + (int)player.CustomProperties["order"]);
             sortedPlayers.Add((int)player.CustomProperties["order"], player);
         }
 
@@ -464,7 +494,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             Hashtable hashtable = new Hashtable();
             hashtable.Add("turn", localTurn);
             player.Value.SetCustomProperties(hashtable);
-            Debug.Log(player.Value.NickName + " va de " + localTurn + "�");
+            Debug.Log(player.Value.NickName + " va de " + localTurn + "°, " + (int)player.Value.CustomProperties["order"]);
             localTurn++;
         }
     }
