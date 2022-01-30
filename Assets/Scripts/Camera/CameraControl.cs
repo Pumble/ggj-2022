@@ -8,6 +8,7 @@ public class CameraControl : MonoBehaviour
     private int position = 1; // 1, 2, 3, ....
     public Camera mainCamera;
     public float timeToMove = 2.0f;
+    public float maxYrotation = 5f;
 
     private void Awake()
     {
@@ -34,6 +35,11 @@ public class CameraControl : MonoBehaviour
 
         if (mainCamera != null)
         {
+            //float mouseX = Input.GetAxisRaw("Mouse X") * timeToMove * Time.deltaTime;
+            //float yRotation = Mathf.Clamp(mouseX, 85f, 95f);
+            //Debug.Log("x-axis: " + mouseX + ", final-rotation: " + yRotation);
+            //Quaternion newRotation = new Quaternion(positions[position].rotation.x, yRotation, positions[position].rotation.z, positions[position].rotation.w);
+
             mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, positions[position].position, timeToMove * Time.deltaTime);
             mainCamera.transform.rotation = Quaternion.Lerp(mainCamera.transform.rotation, positions[position].rotation, timeToMove * Time.deltaTime);
         }
