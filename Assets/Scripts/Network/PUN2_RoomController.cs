@@ -67,23 +67,18 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         // We're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
         // PhotonNetwork.Instantiate(playerPrefab.name, spawnPoint.position, Quaternion.identity, 0);
 
-        generatBoard();
-        /**
-         * Una vez generado el tablero, cada jugador debera instanciar su personaje,
-         * pero antes, hay que asignarles un elemento
-         */
-        setPlayerElementByActorNumber();
-
-        /**
-         * Ahora debemos colocar los jugadores en el tablero
-         * */
-        setPlayersInInitialPosition(0);
-
         /**
          * Aqui asignamos el turno correspondiente, en base al numero random que
          * sacaron cuando ingresaron a la sala
          */
         setTurnsToPlayer();
+
+        generatBoard();
+
+        /**
+         * Ahora debemos colocar los jugadores en el tablero
+         * */
+        setPlayersInInitialPosition(0);
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -133,15 +128,22 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         {
             if (PhotonNetwork.LocalPlayer != null)
             {
-                int masterTurn = (int)PhotonNetwork.CurrentRoom.CustomProperties["turn"];
-                int playerTurn = (int)PhotonNetwork.LocalPlayer.CustomProperties["turn"];
-                if (masterTurn == playerTurn)
+                if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("turn"))
                 {
-                    endTurnButton.enabled = true;
+                    int masterTurn = (int)PhotonNetwork.CurrentRoom.CustomProperties["turn"];
+                    int playerTurn = (int)PhotonNetwork.LocalPlayer.CustomProperties["turn"];
+                    if (masterTurn == playerTurn)
+                    {
+                        endTurnButton.enabled = true;
+                    }
+                    else
+                    {
+                        endTurnButton.enabled = false;
+                    }
                 }
                 else
                 {
-                    endTurnButton.enabled = false;
+                    Debug.LogWarning("PhotonNetwork.CurrentRoom no contiene la key: turn");
                 }
             }
             else
@@ -219,21 +221,6 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     }
 
     #endregion
-
-
-    /// <summary>
-    /// Asignar el elemento a los jugadores en base a su actor number
-    /// </summary>
-    private void setPlayerElementByActorNumber()
-    {
-        foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
-        {
-            Hashtable hashtable = new Hashtable();
-            Elements element = (Elements)player.ActorNumber;
-            hashtable.Add("element", (int)element);
-            PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
-        }
-    }
 
     /// <summary>
     /// Generate the board, make it with slots
@@ -330,7 +317,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             Hashtable hashtable = new Hashtable();
             hashtable.Add("turn", localTurn);
             player.Value.SetCustomProperties(hashtable);
-            Debug.Log(player.Value.NickName + " tiene el turno: " + localTurn);
+            Debug.Log(player.Value.NickName + " va de " + localTurn + "°");
             localTurn++;
         }
     }
