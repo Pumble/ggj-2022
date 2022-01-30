@@ -9,6 +9,8 @@ using Random = UnityEngine.Random;
 
 public class PUN2_RoomController : MonoBehaviourPunCallbacks
 {
+    #region Vars
+
     //Player instance prefab, must be located in the Resources folder
     [Header("Tiempo de espera de otros jugadores")]
     public int timeBeforeMatch = 15;
@@ -37,9 +39,14 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     public int turn = 0;
 
     [Header("Tiempo de las partidas")]
-    public int matchTime = 30;
+    public int turnTime = 30;
     public Text timeLabel;
     private int time;
+
+    [Header("Gestion de la UI")]
+    public Button endTurnButton;
+
+    #endregion
 
     private void Awake()
     {
@@ -80,6 +87,12 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
+            Hashtable hashtable = new Hashtable();
+            hashtable.Add("turn", turn);
+            hashtable.Add("round", round);
+            hashtable.Add("matchInCourse", true);
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
+
             PhotonView photonView = PhotonView.Get(this);
             photonView.RPC("beginDownwiseClock", RpcTarget.All);
             photonView.RPC("nextRound", RpcTarget.All);
@@ -114,6 +127,34 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (PhotonNetwork.CurrentRoom != null)
+        {
+            if (PhotonNetwork.LocalPlayer != null)
+            {
+                int masterTurn = (int)PhotonNetwork.CurrentRoom.CustomProperties["turn"];
+                int playerTurn = (int)PhotonNetwork.LocalPlayer.CustomProperties["turn"];
+                if (masterTurn == playerTurn)
+                {
+                    endTurnButton.enabled = true;
+                }
+                else
+                {
+                    endTurnButton.enabled = false;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("PhotonNetwork.LocalPlayer es null en PUN2_RoomController.cs");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("PhotonNetwork.CurrentRoom es null en PUN2_RoomController.cs");
+        }
+    }
+
     #region OVERRIDES
 
     public override void OnLeftRoom()
@@ -129,7 +170,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     [PunRPC]
     void beginDownwiseClock()
     {
-        time = matchTime;
+        time = turnTime;
         timeLabel.enabled = true;
         InvokeRepeating("updateDownwiseClock", 1f, 1f);
     }
@@ -143,6 +184,9 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             // REVISAR QUIEN GANO
             CancelInvoke("updateDownwiseClock");
             timeLabel.enabled = false;
+
+            PhotonView photonView = PhotonView.Get(this);
+            photonView.RPC("nextTurn", RpcTarget.All);
         }
     }
 
@@ -150,15 +194,32 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     void nextRound()
     {
         round++;
+        Hashtable hashtable = new Hashtable();
+        hashtable.Add("round", round);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
     }
 
     [PunRPC]
     void nextTurn()
     {
         turn++;
+        Hashtable hashtable = new Hashtable();
+        hashtable.Add("turn", turn);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
     }
 
     #endregion
+
+    #region OnClick Events
+
+    public void onClick_EndTurnButton()
+    {
+        PhotonView photonView = PhotonView.Get(this);
+        photonView.RPC("nextTurn", RpcTarget.All);
+    }
+
+    #endregion
+
 
     /// <summary>
     /// Asignar el elemento a los jugadores en base a su actor number
@@ -259,6 +320,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         SortedDictionary<int, Photon.Realtime.Player> sortedPlayers = new SortedDictionary<int, Photon.Realtime.Player>();
         foreach (Photon.Realtime.Player player in PhotonNetwork.PlayerList)
         {
+            Debug.Log(player.NickName + ", order: " + (int)player.CustomProperties["order"]);
             sortedPlayers.Add((int)player.CustomProperties["order"], player);
         }
 
@@ -269,6 +331,8 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             hashtable.Add("turn", localTurn);
             player.Value.SetCustomProperties(hashtable);
             localTurn++;
+
+            Debug.Log(player.Value.NickName + " tiene el turno: " + localTurn);
         }
     }
 }

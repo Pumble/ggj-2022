@@ -11,7 +11,7 @@ public class PerspectivePan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("Camera"))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             if (Input.GetMouseButtonDown(0))
             {
