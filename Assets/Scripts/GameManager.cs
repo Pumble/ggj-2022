@@ -70,6 +70,7 @@ public class GameManager : MonoBehaviourPun
     {
         if (photonView.IsMine)
         {
+            //Player
             Photon.Realtime.Player player = PhotonNetwork.LocalPlayer;
 
             txtNamePlayer.text = player.NickName;
@@ -78,6 +79,7 @@ public class GameManager : MonoBehaviourPun
             txtShield.text = player.CustomProperties["shields"].ToString();
             // imgProfile.GetComponent<RawImage>().texture = playerLocalHost.GetComponent<Player>().imgProfile;
             txtGameResult.text = gameResult();
+            //--------------------------------------------
 
             //Game
             txtGameTurnTime.text = gameTurnTime.ToString();
@@ -87,6 +89,9 @@ public class GameManager : MonoBehaviourPun
                 Photon.Realtime.Player p = PhotonNetwork.PlayerList[i];
                 txtRankings[i].text = p.NickName;
             }
+        }
+        else{
+            Debug.Log("photonView.IsMine es falso");
         }
     }
 

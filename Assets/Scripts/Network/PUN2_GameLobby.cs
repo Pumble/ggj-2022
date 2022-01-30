@@ -88,7 +88,7 @@ public class PUN2_GameLobby : MonoBehaviourPunCallbacks
         //Connection Status and Room creation Button
         GUILayout.BeginHorizontal();
 
-        GUILayout.Label("Conexión: " + PhotonNetwork.NetworkClientState);
+        GUILayout.Label("Conexiï¿½n: " + PhotonNetwork.NetworkClientState);
 
         if (joiningRoom || !PhotonNetwork.IsConnected || PhotonNetwork.NetworkClientState != ClientState.JoinedLobby)
         {
@@ -172,7 +172,7 @@ public class PUN2_GameLobby : MonoBehaviourPunCallbacks
                 PhotonNetwork.ConnectUsingSettings();
             }
         }
-        if (GUILayout.Button("¿Cómo jugar?", GUILayout.Width(140)))
+        if (GUILayout.Button("ï¿½Cï¿½mo jugar?", GUILayout.Width(140)))
         {
             SceneManager.LoadScene("GameHelp", LoadSceneMode.Single);
         }

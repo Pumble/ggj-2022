@@ -377,7 +377,7 @@ namespace Photon.Pun
                     // TODO: implement more effectively. maybe cache?!
                     return room.Players.Values.OrderBy((x) => x.ActorNumber).ToArray();
                 }
-                return new Player[0];
+                return new Player[0]; // *************** porque solo esta retornando el primer elemento???
             }
         }
 

@@ -23,13 +23,18 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
 
     [Header("Variables sobre los jugadores")]
     public int playersCount = 4;
-    [Header("Si algún prefab no se encuentra, se utiliza este")]
+    [Header("Si algï¿½n prefab no se encuentra, se utiliza este")]
     public GameObject defaultPrefab;
-    [Header("Arrays de prefabs que se utilizarán en las partidas online, debe estar en: Resources")]
+    [Header("Arrays de prefabs que se utilizarï¿½n en las partidas online, debe estar en: Resources")]
     public List<GameObject> cavaliersSkins;
 
     public int defaultLife = 100;
     public int defaultAttack = 10;
+
+
+    public int defaultRanking = 0;
+
+    public int[] statsPlayers;
 
     public GameObject localPlayer;
 
@@ -78,7 +83,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
          */
         setTurnsToPlayer();
 
-        if (PhotonNetwork.IsMasterClient)
+        if (PhotonNetwork.IsMasterClient)  // solo se puede ejecutar el 
         {
             PhotonView photonView = PhotonView.Get(this);
             photonView.RPC("beginDownwiseClock", RpcTarget.All);
@@ -88,7 +93,99 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             _gameManager.MatchInCourse = true;
         }
     }
+    private void FixedUpdate()
+    {
+        if (PhotonNetwork.IsMasterClient)  // solo se puede ejecutar el 
+        {
+            sortRanking();
+        }
+        //player PA = ;
+    }
+    public void getStatsPlayer(int numberPlayers, int index)
+    {
+        statsPlayers = new int[numberPlayers];
 
+        for (int i = 0; i < numberPlayers; i++)
+        {
+            Photon.Realtime.Player player = PhotonNetwork.PlayerList[i];
+            switch (index)
+            {
+                case 0:
+                    statsPlayers[i] = (int)player.CustomProperties["laps"] * 100 + (int)player.CustomProperties["slot"];
+                    break;
+                case 1:
+                    statsPlayers[i] = (int)player.CustomProperties["life"];
+                    break;
+                case 2:
+                    statsPlayers[i] = (int)player.CustomProperties["shields"];
+                    break;
+                case 3:
+                    statsPlayers[i] = (int)player.CustomProperties["attack"];
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    private void sortRanking()
+    {
+        int numberPlayers = PhotonNetwork.PlayerList.Length;
+        int a = 0;
+        int aux = 0;
+        int mx = 0;
+        int index = 0;
+        bool sort = true;
+        bool equal = false;
+        Photon.Realtime.Player auxPhoton = null;
+
+        while (sort)
+        {
+            sort = false;
+            equal = false;
+            if (index != 4)
+            {
+                getStatsPlayer(numberPlayers, index);
+                sortMaximum(a, aux, auxPhoton, mx, index, numberPlayers);
+                int k = a;
+                while ((k < (numberPlayers - 1)) && (!equal))
+                {
+                    if (statsPlayers[k] == statsPlayers[k + 1])
+                    {
+                        a = k;
+                        sort = true;
+                        index++;
+                        equal = true;
+                    }
+                    else
+                    {
+                        k++;
+                    }
+                }
+            }
+        }
+    }
+    private void sortMaximum(int a, int aux, Photon.Realtime.Player auxPhoton, int mx, int index, int numberPlayers)
+    {
+        for (int i = a; i < numberPlayers; i++)
+        {
+            mx = i;
+            for (int j = i + 1; j < numberPlayers; j++)
+            {
+                if (statsPlayers[j] > statsPlayers[mx])
+                {
+                    mx = j;
+                }
+            }
+            aux = statsPlayers[i];
+            auxPhoton = PhotonNetwork.PlayerList[i];
+
+            statsPlayers[i] = statsPlayers[mx];
+            PhotonNetwork.PlayerList[i] = PhotonNetwork.PlayerList[mx];
+
+            statsPlayers[mx] = aux;
+            PhotonNetwork.PlayerList[mx] = auxPhoton;
+        }
+    }
     void OnGUI()
     {
         if (PhotonNetwork.CurrentRoom == null)
@@ -102,16 +199,16 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
 
         //Show the Room name
         GUI.Label(new Rect(135, 5, 200, 25), PhotonNetwork.CurrentRoom.Name);
-
+        /*
         //Show the list of the players connected to this Room
-        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+        for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)                     
         {
             //Show if this player is a Master Client. There can only be one Master Client per Room so use this to define the authoritative logic etc.)
             string isMasterClient = (PhotonNetwork.PlayerList[i].IsMasterClient ? "*" : "");
             int life = (int)PhotonNetwork.PlayerList[i].CustomProperties["life"];
             int attack = (int)PhotonNetwork.PlayerList[i].CustomProperties["attack"];
             GUI.Label(new Rect(5, 35 + 30 * i, 200, 25), PhotonNetwork.PlayerList[i].ActorNumber + "-" + isMasterClient + PhotonNetwork.PlayerList[i].NickName + "("+ life + ", "+ attack + ")");
-        }
+        }*/
     }
 
     #region OVERRIDES
@@ -237,6 +334,10 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         hashtable.Add("attack", defaultAttack);
         hashtable.Add("life", defaultLife);
         hashtable.Add("slot", initialPosition);
+        hashtable.Add("ranking", defaultRanking);
+
+        //    hashtable.Add("ranking", defaultRanking);                       987*sdfgsdfg987
+
         PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
 
         Player playerData = avatar.GetComponent<Player>();
