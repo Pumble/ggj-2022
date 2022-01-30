@@ -330,9 +330,8 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             Hashtable hashtable = new Hashtable();
             hashtable.Add("turn", localTurn);
             player.Value.SetCustomProperties(hashtable);
-            localTurn++;
-
             Debug.Log(player.Value.NickName + " tiene el turno: " + localTurn);
+            localTurn++;
         }
     }
 }
