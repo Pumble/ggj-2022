@@ -68,24 +68,31 @@ public class GameManager : MonoBehaviourPun
 
     private void updateStatsUI()
     {
-        if (photonView.IsMine)
+        if (PhotonNetwork.NetworkClientState == Photon.Realtime.ClientState.Joined)
         {
-            Photon.Realtime.Player player = PhotonNetwork.LocalPlayer;
-
-            txtNamePlayer.text = player.NickName;
-            sliderLife.value = (int)player.CustomProperties["life"];
-            txtPA.text = player.CustomProperties["PA"].ToString();
-            txtShield.text = player.CustomProperties["shields"].ToString();
-            // imgProfile.GetComponent<RawImage>().texture = playerLocalHost.GetComponent<Player>().imgProfile;
-            txtGameResult.text = gameResult();
-
-            //Game
-            txtGameTurnTime.text = gameTurnTime.ToString();
-
-            for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+            if (PhotonNetwork.LocalPlayer != null)
             {
-                Photon.Realtime.Player p = PhotonNetwork.PlayerList[i];
-                txtRankings[i].text = p.NickName;
+                Photon.Realtime.Player player = PhotonNetwork.LocalPlayer;
+
+                txtNamePlayer.text = player.NickName;
+                sliderLife.value = (int)player.CustomProperties["life"];
+                txtPA.text = player.CustomProperties["PA"].ToString();
+                txtShield.text = player.CustomProperties["shields"].ToString();
+                // imgProfile.GetComponent<RawImage>().texture = playerLocalHost.GetComponent<Player>().imgProfile;
+                txtGameResult.text = gameResult();
+
+                //Game
+                txtGameTurnTime.text = gameTurnTime.ToString();
+
+                for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+                {
+                    Photon.Realtime.Player p = PhotonNetwork.PlayerList[i];
+                    txtRankings[i].text = p.NickName;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("PhotonNetwork.LocalPlayer no existe en GameManager.cs/updateStatsUI");
             }
         }
     }
