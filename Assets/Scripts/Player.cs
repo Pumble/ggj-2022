@@ -23,15 +23,28 @@ public class Player : MonoBehaviourPun
         localPlayer = PhotonNetwork.LocalPlayer;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (gameManager.MatchInCourse)
+        if (PhotonNetwork.CurrentRoom != null)
         {
-            //if ((int)PhotonNetwork.LocalPlayer.CustomProperties["turn"] == roomController.turn)
-            //{ 
-            //    // AQUI ME PUEDO MOVER
+            if (PhotonNetwork.LocalPlayer != null)
+            {
+                int masterTurn = (int)PhotonNetwork.CurrentRoom.CustomProperties["turn"];
+                int playerTurn = (int)PhotonNetwork.LocalPlayer.CustomProperties["turn"];
 
-            //}
+                if (masterTurn == playerTurn)
+                {
+                    Debug.Log("Es mi turno: " + PhotonNetwork.LocalPlayer.NickName + ". Master turn: " + masterTurn + ", local turn: " + playerTurn);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("PhotonNetwork.LocalPlayer es null en Player.cs");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("PhotonNetwork.CurrentRoom es null en Player.cs");
         }
     }
 
@@ -66,29 +79,4 @@ public class Player : MonoBehaviourPun
             yield return null;
         }
     }
-
-    //public void setLife(int a)
-    //{
-    //    if(PhotonNetwork.is
-
-    //    if ((life + a) <= 100)
-    //    {
-    //        life = life + a;
-    //    }
-    //    else
-    //    {
-    //        if ((life + a) > 100)
-    //        {
-    //            life = 100;
-    //        }
-    //        else
-    //        {
-    //            if ((life + a) <= 0)
-    //            {
-    //                life = 0;
-    //                death();
-    //            }
-    //        }
-    //    }
-    //}
 }
