@@ -527,6 +527,7 @@ GameObject:
   - component: {fileID: 1299766596}
   - component: {fileID: 1299766595}
   - component: {fileID: 1299766594}
+  - component: {fileID: 1299766598}
   m_Layer: 5
   m_Name: Hand
   m_TagString: Untagged
@@ -615,6 +616,28 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1299766598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1299766593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5852f6f318466344f999321b9b452b68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handHolder: {fileID: 1668131220}
+  prefabs:
+  - {fileID: 7089894773517632860, guid: 48f64c9f648c0644a9fe9940462c3158, type: 3}
+  - {fileID: 7089894773517632860, guid: 370eee793e418cc469371ccd72b01a24, type: 3}
+  - {fileID: 7089894773517632860, guid: 12ba4108e18a7d248846df1ab97550ca, type: 3}
+  - {fileID: 7089894773517632860, guid: bb4a661e701da024ab6330529b65b9c7, type: 3}
+  - {fileID: 7089894773517632860, guid: 3de1bce259372cb4a9f086d6bbab0b75, type: 3}
+  - {fileID: 7089894773517632860, guid: 01d7a909d03629048834c54eaa5acc46, type: 3}
+  - {fileID: 7089894773517632860, guid: 65403ad8c0888ea43b05ff1fa62b83fa, type: 3}
+  - {fileID: 7089894773517632860, guid: 2981264d37207ee41a1a7528a57059f2, type: 3}
 --- !u!1 &1594563305
 GameObject:
   m_ObjectHideFlags: 0
