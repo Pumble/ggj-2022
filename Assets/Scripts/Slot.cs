@@ -39,6 +39,8 @@ public class Slot : MonoBehaviour
         }
     }
 
+    #region Positions
+
     public int getFreePosition()
     {
         bool freePosition = false;
@@ -91,4 +93,6 @@ public class Slot : MonoBehaviour
     {
         positions[index].player = null;
     }
+
+    #endregion
 }

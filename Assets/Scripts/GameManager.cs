@@ -34,6 +34,9 @@ public class GameManager : MonoBehaviourPun
     public Text txtShield;
     public RawImage imgProfile;
 
+    [Header("Sobre las mecanicas")]
+    public int PALimitPerPlayer = 10;
+
     #endregion
 
     public bool MatchInCourse = false;

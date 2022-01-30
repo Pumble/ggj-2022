@@ -12,6 +12,7 @@ public class Player : MonoBehaviourPun
     public GameManager gameManager;
     public PUN2_RoomController roomController;
     public Photon.Realtime.Player localPlayer;
+    public int PAperTurn = 5;
 
     #endregion
 
@@ -19,8 +20,9 @@ public class Player : MonoBehaviourPun
 
     void Start()
     {
-        roomController = FindObjectsOfType<PUN2_RoomController>()[0];
+        roomController = FindObjectOfType<PUN2_RoomController>();
         localPlayer = PhotonNetwork.LocalPlayer;
+        gameManager = FindObjectOfType<GameManager>();
     }
 
     private void FixedUpdate()
@@ -39,10 +41,24 @@ public class Player : MonoBehaviourPun
                 {
                     int masterTurn = (int)PhotonNetwork.CurrentRoom.CustomProperties["turn"];
                     int playerTurn = (int)PhotonNetwork.LocalPlayer.CustomProperties["turn"];
+                    int round = (int)PhotonNetwork.CurrentRoom.CustomProperties["round"];
 
                     if (masterTurn == playerTurn)
                     {
-                        Debug.Log("Es mi turno: " + PhotonNetwork.LocalPlayer.NickName + ". Master turn: " + masterTurn + ", local turn: " + playerTurn);
+                        Debug.Log("Ronda: " + round + ". Turno: " + PhotonNetwork.LocalPlayer.NickName + ". Master turn: " + masterTurn + ", local turn: " + playerTurn);
+                        // 1- ASIGNAR PA
+                        int currentPA = (int)PhotonNetwork.LocalPlayer.CustomProperties["PA"]; // OBTENER LOS PA
+                        currentPA += PAperTurn; // AÑADIR MAS PA
+                        if (currentPA > gameManager.PALimitPerPlayer) // SI SE PASA DE 10, LIMITARLO
+                        {
+                            currentPA = gameManager.PALimitPerPlayer;
+                        }
+                        Hashtable hashtable = new Hashtable();
+                        hashtable.Add("PA", currentPA);
+                        PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
+
+                        // 2- ASIGNAR CARTAS
+
                     }
                 }
             }
