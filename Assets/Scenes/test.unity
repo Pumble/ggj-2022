@@ -630,14 +630,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handHolder: {fileID: 1668131220}
   prefabs:
-  - {fileID: 7089894773517632860, guid: 48f64c9f648c0644a9fe9940462c3158, type: 3}
-  - {fileID: 7089894773517632860, guid: 370eee793e418cc469371ccd72b01a24, type: 3}
   - {fileID: 7089894773517632860, guid: 12ba4108e18a7d248846df1ab97550ca, type: 3}
-  - {fileID: 7089894773517632860, guid: bb4a661e701da024ab6330529b65b9c7, type: 3}
-  - {fileID: 7089894773517632860, guid: 3de1bce259372cb4a9f086d6bbab0b75, type: 3}
   - {fileID: 7089894773517632860, guid: 01d7a909d03629048834c54eaa5acc46, type: 3}
-  - {fileID: 7089894773517632860, guid: 65403ad8c0888ea43b05ff1fa62b83fa, type: 3}
+  - {fileID: 7089894773517632860, guid: 48f64c9f648c0644a9fe9940462c3158, type: 3}
   - {fileID: 7089894773517632860, guid: 2981264d37207ee41a1a7528a57059f2, type: 3}
+  - {fileID: 7089894773517632860, guid: bb4a661e701da024ab6330529b65b9c7, type: 3}
+  - {fileID: 7089894773517632860, guid: fd896e8a0d603484aa3e855e0a1a3f0f, type: 3}
+  - {fileID: 7089894773517632860, guid: 3de1bce259372cb4a9f086d6bbab0b75, type: 3}
+  - {fileID: 7089894773517632860, guid: f0a437c7d21553e42a4a2bc608adda83, type: 3}
+  - {fileID: 7089894773517632860, guid: 65403ad8c0888ea43b05ff1fa62b83fa, type: 3}
+  - {fileID: 7089894773517632860, guid: 370eee793e418cc469371ccd72b01a24, type: 3}
 --- !u!1 &1594563305
 GameObject:
   m_ObjectHideFlags: 0

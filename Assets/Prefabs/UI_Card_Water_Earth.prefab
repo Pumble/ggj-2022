@@ -7,22 +7,38 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1124215776517012210, guid: 9ad408ad25d2180489e7d72c7a20341d, type: 3}
+      propertyPath: m_Texture
+      value: 
+      objectReference: {fileID: 8400000, guid: 4f99b5cb96c73264b86acef885d40786, type: 2}
     - target: {fileID: 4504512500830937067, guid: 9ad408ad25d2180489e7d72c7a20341d, type: 3}
       propertyPath: m_Name
-      value: UI_Card_Earth
+      value: UI_Card_Water_Earth
       objectReference: {fileID: 0}
     - target: {fileID: 5419093195618986687, guid: 9ad408ad25d2180489e7d72c7a20341d, type: 3}
       propertyPath: title
-      value: Desierto
+      value: Arenas movedizas
       objectReference: {fileID: 0}
     - target: {fileID: 5419093195618986687, guid: 9ad408ad25d2180489e7d72c7a20341d, type: 3}
       propertyPath: elements.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5419093195618986687, guid: 9ad408ad25d2180489e7d72c7a20341d, type: 3}
       propertyPath: elements.Array.data[0]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5419093195618986687, guid: 9ad408ad25d2180489e7d72c7a20341d, type: 3}
+      propertyPath: elements.Array.data[1]
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 8195418086370840256, guid: 9ad408ad25d2180489e7d72c7a20341d, type: 3}
+      propertyPath: m_VideoClip
+      value: 
+      objectReference: {fileID: 32900000, guid: 77687ef8a112f384199885f34015aa67, type: 3}
+    - target: {fileID: 8195418086370840256, guid: 9ad408ad25d2180489e7d72c7a20341d, type: 3}
+      propertyPath: m_TargetTexture
+      value: 
+      objectReference: {fileID: 8400000, guid: 4f99b5cb96c73264b86acef885d40786, type: 2}
     - target: {fileID: 8537324369125162092, guid: 9ad408ad25d2180489e7d72c7a20341d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
