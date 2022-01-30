@@ -216,7 +216,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         if ((true/*a == 1*/) && ((int)player.CustomProperties["shields"] < 2) && ((int)player.CustomProperties["PA"] >= 2))
         {
             player.CustomProperties["shields"] = (int)player.CustomProperties["shields"] + 1;
-            player.CustomProperties["PA"] = (int)player.CustomProperties["PA"] -2;
+            player.CustomProperties["PA"] = (int)player.CustomProperties["PA"] - 2;
         }
     }
     void OnGUI()
@@ -437,29 +437,34 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         int skin = PhotonNetwork.LocalPlayer.ActorNumber;
 
         Debug.Log("initialSlot =" + initialSlot + "freePosition =" + freePosition + "Skin =" + skin);
+        GameObject avatar = PhotonNetwork.Instantiate(
+                    cavaliersSkins[skin].name,
+                    position,
+                    Quaternion.identity);
 
+        avatar.name = player.NickName;
+        // ASIGNAR SLOT
+        Hashtable hashtable = new Hashtable();
+        hashtable.Add("attack", defaultAttack);
+        hashtable.Add("life", defaultLife);
+        hashtable.Add("slot", initialPosition);
+        hashtable.Add("element", skin);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
+
+        _gameManager.loadImgProfile(skin);
+
+        Player playerData = avatar.GetComponent<Player>();
+        playerData.gameManager = _gameManager;
+
+        initialSlot.setPlayerInPosition(freePosition, avatar);
         try
         {
-            GameObject avatar = PhotonNetwork.Instantiate(
-            cavaliersSkins[skin].name,
-            position,
-            Quaternion.identity
-        );
-            avatar.name = player.NickName;
-            // ASIGNAR SLOT
-            Hashtable hashtable = new Hashtable();
-            hashtable.Add("attack", defaultAttack);
-            hashtable.Add("life", defaultLife);
-            hashtable.Add("slot", initialPosition);
-            hashtable.Add("element", skin);
-            PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
 
-            _gameManager.loadImgProfile(skin);
-
-            Player playerData = avatar.GetComponent<Player>();
-            playerData.gameManager = _gameManager;
-
-            initialSlot.setPlayerInPosition(freePosition, avatar);
+/*
+GameObject avatar = PhotonNetwork.Instantiate(
+                    cavaliersSkins[skin].name,
+                    position,
+                    Quaternion.identity); */
 
         }
         catch (Exception e)

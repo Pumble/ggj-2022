@@ -63,7 +63,7 @@ public class Player : MonoBehaviourPun, IOnEventCallback
             localPlayer.CustomProperties["PAperTurn"] = (int)localPlayer.CustomProperties["PAForTurn"] + 1;
         }
         // fin
-        
+
         StartCoroutine(moveToken(3f, fromPosition, toPosition, this.transform));
 
 
@@ -157,7 +157,11 @@ public class Player : MonoBehaviourPun, IOnEventCallback
                             Debug.Log("Es mi turno " + PhotonNetwork.LocalPlayer.NickName + "!");
                             // 1- ASIGNAR PA
                             int currentPA = (int)PhotonNetwork.LocalPlayer.CustomProperties["PA"]; // OBTENER LOS PA
-                            currentPA += PAperTurn; // AñADIR MAS PA
+
+                            //  PAperTurn lo cambie por  (int)localPlayer.CustomProperties["PAForTurn"] 
+                            currentPA += (int)PhotonNetwork.LocalPlayer.CustomProperties["PAperTurn"];//PAperTurn; // A�ADIR MAS PA
+
+
                             if (currentPA > gameManager.PALimitPerPlayer) // SI SE PASA DE 10, LIMITARLO
                             {
                                 currentPA = gameManager.PALimitPerPlayer;
