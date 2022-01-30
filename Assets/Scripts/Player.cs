@@ -75,7 +75,21 @@ public class Player : MonoBehaviourPun
         hashtable.Add("slot", nextFreePosition);
         PhotonNetwork.SetPlayerCustomProperties(hashtable);
 
+        // Aumentando el contador de vueltas y bonificación de primero
+        bool incrLaps = increaseLaps(from, to);
+        if (incrLaps)
+        {
+            localPlayer.CustomProperties["laps"] = (int)(localPlayer.CustomProperties["laps"]) + 1;
+        }
+        if (incrLaps && ((int)(localPlayer.CustomProperties["ranking"])) == 0)
+        {
+            localPlayer.CustomProperties["PAForTurn"] = (int)localPlayer.CustomProperties["PAForTurn"] + 1;
+        }
+        // fin
+        
         StartCoroutine(moveToken(3f, fromPosition, toPosition, this.transform));
+
+
     }
 
     IEnumerator moveToken(float time, Vector3 from, Vector3 to, Transform transform)
@@ -87,5 +101,16 @@ public class Player : MonoBehaviourPun
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+    }
+
+    // Nuevas funciones
+    private bool increaseLaps(int from, int to)
+    {
+        bool incrLaps = false;
+        if ((from >= 32) && (to <= 10))
+        {
+            incrLaps = true;
+        }
+        return incrLaps;
     }
 }

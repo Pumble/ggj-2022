@@ -101,14 +101,6 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
             _gameManager.MatchInCourse = true;
         }
     }
-    private void FixedUpdate()
-    {
-        if (PhotonNetwork.IsMasterClient)  // solo se puede ejecutar el 
-        {
-            sortRanking();
-        }
-        //player PA = ;
-    }
     public void getStatsPlayer(int numberPlayers, int index)
     {
         statsPlayers = new int[numberPlayers];
@@ -170,6 +162,9 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
                     }
                 }
             }
+        }
+        for(int i = 0; i < numberPlayers; i++){
+            PhotonNetwork.PlayerList[i].CustomProperties["ranking"] = i;
         }
     }
     private void sortMaximum(int a, int aux, Photon.Realtime.Player auxPhoton, int mx, int index, int numberPlayers)
@@ -252,6 +247,11 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         {
             Debug.LogWarning("PhotonNetwork.CurrentRoom es null en PUN2_RoomController.cs");
         }
+        if (PhotonNetwork.IsMasterClient)  // solo se puede ejecutar el 
+        {
+            sortRanking();
+        }
+        //player PA = ;
     }
 
     #region OVERRIDES
