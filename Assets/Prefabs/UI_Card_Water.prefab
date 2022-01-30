@@ -37,7 +37,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 543658210132902367, guid: a356d020dd2687d4f816f3d62cf1575d, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 543658210132902367, guid: a356d020dd2687d4f816f3d62cf1575d, type: 3}
       propertyPath: m_AnchorMax.y
@@ -45,7 +45,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 543658210132902367, guid: a356d020dd2687d4f816f3d62cf1575d, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 543658210132902367, guid: a356d020dd2687d4f816f3d62cf1575d, type: 3}
       propertyPath: m_AnchorMin.y
@@ -105,6 +105,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 543658210132902367, guid: a356d020dd2687d4f816f3d62cf1575d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201264686143200939, guid: a356d020dd2687d4f816f3d62cf1575d, type: 3}
+      propertyPath: title
+      value: Mar
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201264686143200939, guid: a356d020dd2687d4f816f3d62cf1575d, type: 3}
+      propertyPath: element
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201264686143200939, guid: a356d020dd2687d4f816f3d62cf1575d, type: 3}
+      propertyPath: stats.Array.data[1].<Value>k__BackingField
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201264686143200939, guid: a356d020dd2687d4f816f3d62cf1575d, type: 3}
+      propertyPath: stats.Array.data[2].<Value>k__BackingField
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
