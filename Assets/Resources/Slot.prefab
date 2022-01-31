@@ -433,6 +433,7 @@ MonoBehaviour:
   card: {fileID: 0}
   index: 0
   PACost: 2
+  localPlane: {fileID: 2521190723224644465}
 --- !u!114 &-2848404750924913597
 MonoBehaviour:
   m_ObjectHideFlags: 0

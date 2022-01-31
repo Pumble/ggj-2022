@@ -8,7 +8,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 using UnityEngine.UI;
-
+using UnityEngine.Video;
 
 public class InnerPosition
 {
@@ -37,7 +37,9 @@ public class Slot : MonoBehaviourPun
     public int PACost = 2;
 
     private string selectedCard;
-    private GameObject plane;
+    private VideoPlayer localVideoPlayer;
+    private RawImage localRawImage;
+    public GameObject localPlane;
 
     #endregion
 
@@ -50,6 +52,8 @@ public class Slot : MonoBehaviourPun
             positions[i] = new InnerPosition(objects[i].transform.position);
         }
 
+        localVideoPlayer = GetComponentInChildren<VideoPlayer>();
+        localRawImage = GetComponentInChildren<RawImage>();
     }
 
     #region Positions
@@ -151,7 +155,7 @@ public class Slot : MonoBehaviourPun
                 PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
 
                 card = selectedCardGO.GetComponent<Card>();
-                showSummonedCard();
+                showSummonedCard(selectedCardGO);
 
                 // Array contains the data to share
                 object[] content = new object[] { selectedCard };
@@ -170,10 +174,26 @@ public class Slot : MonoBehaviourPun
         }
     }
 
-    private void showSummonedCard()
+    private void showSummonedCard(GameObject selectedCardGO)
     {
-        if (card != null)
-        {
-        }
+        VideoPlayer videoPlayer = selectedCardGO.GetComponent<VideoPlayer>();
+        RawImage rawImage = selectedCardGO.GetComponent<RawImage>();
+
+        localVideoPlayer.source = videoPlayer.source;
+        localVideoPlayer.clip = videoPlayer.clip;
+        localVideoPlayer.playOnAwake = videoPlayer.playOnAwake;
+        localVideoPlayer.isLooping = videoPlayer.isLooping;
+        localVideoPlayer.renderMode = videoPlayer.renderMode;
+        localVideoPlayer.targetTexture = videoPlayer.targetTexture;
+
+        localRawImage.texture = rawImage.texture;
+
+        //MeshRenderer meshRenderer = localPlane.GetComponent<MeshRenderer>();
+        //Material material = Resources.Load<Texture>("CardTextures/");
+        //meshRenderer.material = material;
+
+        //if (card != null)
+        //{
+        //}
     }
 }
