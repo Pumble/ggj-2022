@@ -9,6 +9,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public enum Elements : ushort { Fire = 1, Water = 2, Earth = 3, Wind = 4 };
 public enum PlayerState : ushort { Death = 0, Alive = 1, Winner = 2 };
+public enum NetworkEvents : ushort { TurnChange = 99, RoundChange = 100, PlayerAttack = 101, SummonCard = 102, SummonedCard = 103 };
 
 public class GameManager : MonoBehaviourPun
 {

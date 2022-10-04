@@ -48,8 +48,6 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
     [Header("Gestion de la UI")]
     public Button endTurnButton;
 
-    public const byte NotifyTurnChangeEventCode = 1;
-
     #endregion
 
     private void Awake()
@@ -211,13 +209,15 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         turn++;
         if (turn > PhotonNetwork.PlayerList.Length)
         {
-            turn = 0;
+            turn = 1;
             photonView.RPC("nextRound", RpcTarget.All);
         }
 
         Hashtable hashtable = new Hashtable();
         hashtable.Add("turn", turn);
         PhotonNetwork.CurrentRoom.SetCustomProperties(hashtable);
+
+        Debug.Log("Iniciando --> Ronda: " + round + ",Turno #" + turn);
 
         NotifyTurnChangeEvent();
     }
@@ -232,7 +232,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         {
             Receivers = ReceiverGroup.All
         };
-        PhotonNetwork.RaiseEvent(NotifyTurnChangeEventCode, content, raiseEventOptions, SendOptions.SendReliable);
+        PhotonNetwork.RaiseEvent((int)NetworkEvents.TurnChange, content, raiseEventOptions, SendOptions.SendReliable);
     }
 
     #endregion
@@ -310,6 +310,7 @@ public class PUN2_RoomController : MonoBehaviourPunCallbacks
         Vector3 position = initialSlot.getLocationByIndex(freePosition) + slots[initialPosition].transform.position;
 
         int skin = PhotonNetwork.LocalPlayer.ActorNumber;
+        Debug.Log(PhotonNetwork.LocalPlayer.NickName + "-->" + PhotonNetwork.LocalPlayer.ActorNumber);
         GameObject avatar = PhotonNetwork.Instantiate(
             cavaliersSkins[skin].name,
             position,

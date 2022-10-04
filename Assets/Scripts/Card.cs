@@ -76,9 +76,4 @@ public class Card : MonoBehaviour
         }
         return stats;
     }
-
-    public void OnClick_SelectCard()
-    {
-        Debug.Log("carta seleccionada: " + title);
-    }
 }
